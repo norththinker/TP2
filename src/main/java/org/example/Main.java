@@ -5,14 +5,10 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
 
 
 public class Main extends Application {
@@ -22,56 +18,68 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage scene) {
+    public void start(Stage primaryStage) {
         var root = new Pane();
-        var sceneAcceuil = new Scene(root, WIDTH, HEIGHT);
-        root.setBackground(Background.fill(Color.BLUE));
-        Canvas canvas = new Canvas(WIDTH, HEIGHT    );
-        var context = canvas.getGraphicsContext2D();
-
+        var scene = new Scene(root, WIDTH, HEIGHT);
+        var canvas = new Canvas(WIDTH, HEIGHT);
 
         root.getChildren().add(canvas);
+        var contextCharlotte = canvas.getGraphicsContext2D();
 
 
+        var charlotte = new Personnage(0,0, 100,100);
 
-        Personnage charlotte = new Personnage(3,3,102,90);
-        sceneAcceuil.setOnKeyPressed((e) -> {
+        scene.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.ESCAPE) {
 // Ferme JavaFX
-
+                Platform.exit();
             } else {
                 Input.setKeyPressed(e.getCode(), true);
             }
         });
-        sceneAcceuil.setOnKeyReleased((e) -> {
+        scene.setOnKeyReleased((e) -> {
             Input.setKeyPressed(e.getCode(), false);
         });
 
-var timer = new AnimationTimer() {
-    long lastTime = System.nanoTime();
-    @Override
-    public void handle(long now) {
+
+        var timer = new AnimationTimer() {
+            long lastTime = System.nanoTime();
+
+            @Override
+            public void handle(long now) {
+
+                double deltaTemps = (now - lastTime) * 1e-9;
 
 
-        double deltaTemps = (now - lastTime) * 1e-9;
+                /* -- Update --
+                for (var flocon : flocons)
+                    flocon.update(deltaTemps);
+                */
 
-        charlotte.draw(context);
+                contextCharlotte.clearRect(0,0, WIDTH, HEIGHT);
 
-
-        charlotte.update(deltaTemps);
-
-        lastTime = now;
-    }
-};
-  timer.start();
-
-
+                // -- Dessin --
+                // Arrière-plan
+               contextCharlotte.setFill(Color.BLUE);
+               contextCharlotte.fillRect(0, 0, WIDTH, HEIGHT);
 
 
+                charlotte.update(deltaTemps);
 
+                charlotte.draw(contextCharlotte);
 
-        scene.setScene(sceneAcceuil);
-        scene.setResizable(false);
-        scene.show();
+                /*
+                for (var flocon : flocons)
+                    flocon.draw(context);
+                */
+
+                lastTime = now;
+            }
+        };
+        timer.start();
+
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Animations!");
+        primaryStage.show();
     }
 }
