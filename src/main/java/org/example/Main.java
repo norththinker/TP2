@@ -55,7 +55,7 @@ public class Main extends Application {
 
 
 
-        Poissons poissons = new Poissons(WIDTH+50 , r.nextDouble(HEIGHT/4,HEIGHT/2),100,100,r.nextDouble(-100,100));
+        Poissons poissons = new Poissons(WIDTH+50 , r.nextDouble(HEIGHT/4,HEIGHT/2),90,90,r.nextDouble(-100,100));
         sceneAcceuil.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
                 long tempsActuel  = System.nanoTime();
@@ -93,7 +93,7 @@ public class Main extends Application {
                 for (Projectile projectile : projectiles) {
                     if (isLancerProjectile() && projectile != null) {
                         projectile.update(deltaTemps);
-                        projectile.encolission(poissons);
+                        projectile.testCollision(poissons);
                     }
                 }
 

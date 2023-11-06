@@ -2,7 +2,6 @@ package org.example;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 public class Projectile extends ObjetduJeu{
@@ -49,18 +48,21 @@ public class Projectile extends ObjetduJeu{
     }
 
 
-    public void encolission(ObjetduJeu objetduJeu) {
+    public boolean enCollisionAvec(ObjetduJeu objetduJeu) {
+        double dx = this.x - objetduJeu.getX();
+        double dy = this.y - objetduJeu.getY();
+        double dCarre = dx * dx + dy * dy;
+        return dCarre < (this.w/2 + objetduJeu.getW()/2) * (this.w/2 + objetduJeu.getW()/2) + (this.h/2 + objetduJeu.getH()/2) * (this.h/2 + objetduJeu.getW()/2);
 
-        if (objetduJeu.getW()/2 - w/2 == objetduJeu.getX()-x || objetduJeu.getH()/2 - h/2 == objetduJeu.getY()-y) {
-
-            objetduJeu.setEstTouche(true);
-
-
-        }
 
 
     }
+    public void testCollision(ObjetduJeu autre) {
+        if (this.enCollisionAvec(autre)) {
 
+         autre.setEstTouche(true);
+        }
+    }
 
 
 

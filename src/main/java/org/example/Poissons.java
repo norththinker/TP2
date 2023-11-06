@@ -120,9 +120,12 @@ public class Poissons extends ObjetduJeu {
         context.setFill(Color.rgb(200, 200, 200, 0));
         context.fillRect(x, y, w, h);
         context.drawImage(logoView, x, y);
+        context.setStroke(Color.YELLOW);
+        context.setLineWidth(2.0);
+        context.strokeRect(x,y,w,h);
         if ( estTouche) {
-            System.out.println(1);
-            context.clearRect(x,y,w,h);
+context.clearRect(x,y,w,h);
+
         }
 
     }
@@ -143,6 +146,7 @@ public class Poissons extends ObjetduJeu {
 
 
         }
+
 
     }
 
