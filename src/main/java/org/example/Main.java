@@ -53,9 +53,11 @@ public class Main extends Application {
         Personnage charlotte = new Personnage(3, 3, 102, 90);
         Random r =new Random();
 
+Poissons poissons1[] = new Poissons[5];
+        for (int i = 0; i < 5; i++) {
+            poissons1[i] = new Poissons(WIDTH+50 , r.nextDouble(HEIGHT/4,HEIGHT/2),90,90,r.nextDouble(-100,100));
+        }
 
-
-        Poissons poissons = new Poissons(WIDTH+50 , r.nextDouble(HEIGHT/4,HEIGHT/2),90,90,r.nextDouble(-100,100));
         sceneAcceuil.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
                 long tempsActuel  = System.nanoTime();
@@ -83,32 +85,41 @@ public class Main extends Application {
 
 
                 double deltaTemps = (now - lastTime) * 1e-9;
+                for (int i = 0; i < poissons1.length; i++) {
+                    poissons1[i].update(deltaTemps);
+                }
 
-                poissons.update(deltaTemps);
 
                 charlotte.update(deltaTemps);
                 charlotte.setX(charlotte.getX());
                 charlotte.setY(charlotte.getY());
 
                 for (Projectile projectile : projectiles) {
+                    for (int i = 0; i < poissons1.length; i++) {
+
+
                     if (isLancerProjectile() && projectile != null) {
                         projectile.update(deltaTemps);
-                        projectile.testCollision(poissons);
+                        projectile.testCollision(poissons1[i]);
+                    }
                     }
                 }
 
 // Dans la boucle de dessin
 
                 context.clearRect(0, 0, WIDTH, HEIGHT);
-
+                charlotte.draw(context);
                 for (Projectile projectile : projectiles) {
                     if (isLancerProjectile() && projectile != null) {
                         projectile.draw(context);
                     }
 
                 }
-                poissons.draw(context);
-                charlotte.draw(context);
+                for (int i = 0; i < poissons1.length; i++) {
+                poissons1[i].draw(context);
+
+                }
+
 
                  lastTime = now;}
         };
