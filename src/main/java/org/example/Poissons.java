@@ -1,4 +1,149 @@
 package org.example;
 
-public class Poissons {
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+
+public class Poissons extends ObjetduJeu {
+    private double x, y;
+    private double w;
+    private double h;
+    private double ax;
+    private double ay;
+
+    @Override
+    public double getX() {
+        return x;
+    }
+
+    @Override
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    @Override
+    public double getY() {
+        return y;
+    }
+
+    @Override
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    @Override
+    public double getW() {
+        return w;
+    }
+
+    @Override
+    public void setW(double w) {
+        this.w = w;
+    }
+
+    @Override
+    public double getH() {
+        return h;
+    }
+
+    @Override
+    public void setH(double h) {
+        this.h = h;
+    }
+
+    public double getAx() {
+        return ax;
+    }
+
+    public void setAx(double ax) {
+        this.ax = ax;
+    }
+
+    public double getAy() {
+        return ay;
+    }
+
+    public void setAy(double ay) {
+        this.ay = ay;
+    }
+
+    @Override
+    public double getVx() {
+        return vx;
+    }
+
+    @Override
+    public void setVx(double vx) {
+        this.vx = vx;
+    }
+
+    @Override
+    public double getVy() {
+        return vy;
+    }
+
+    @Override
+    public void setVy(double vy) {
+        this.vy = vy;
+    }
+
+    public Image getLogoView() {
+        return logoView;
+    }
+
+    public void setLogoView(Image logoView) {
+        this.logoView = logoView;
+    }
+
+    public boolean isEstTouche() {
+        return estTouche;
+    }
+
+    public void setEstTouche(boolean estTouche) {
+        this.estTouche = estTouche;
+    }
+
+    private boolean estTouche =false;
+    private double vx = -300 ;
+    private double vy = 300 ;
+    private Image logoView = new Image("poisson1.png");
+
+    public Poissons(double x, double y, double w, double h,double vy) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+
+        this.vy = vy;
+    }
+    public void draw(GraphicsContext context) {
+        context.setFill(Color.rgb(200, 200, 200, 0));
+        context.fillRect(x, y, w, h);
+        context.drawImage(logoView, x, y);
+        if ( estTouche) {
+            System.out.println(1);
+            context.clearRect(x,y,w,h);
+        }
+
+    }
+
+    public void update(double deltaTemps) {
+
+
+        x += deltaTemps * vx;
+        y += deltaTemps * vy;
+
+
+
+
+        if (y + h > Main.HEIGHT) {
+
+            // Déplace les flocons vers le haut
+            y = Main.HEIGHT - h;
+
+
+        }
+
+    }
+
 }

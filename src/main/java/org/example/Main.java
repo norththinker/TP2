@@ -5,39 +5,72 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 
 public class Main extends Application {
     public static final double WIDTH = 900, HEIGHT = 520;
+
+
+
     public static void main(String[] args) {
         launch(args);
     }
 
+    public boolean isLancerProjectile() {
+        return lancerProjectile;
+    }
+
+    public void setLancerProjectile(boolean lancerProjectile) {
+        this.lancerProjectile = lancerProjectile;
+    }
+    private ArrayList<Projectile> projectiles = new ArrayList<>();
+    private boolean lancerProjectile;
+    private long lastProjectileTime = 0;
+    private final long projectileCooldown = 500_000_000;
+
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage scene) {
         var root = new Pane();
-        var scene = new Scene(root, WIDTH, HEIGHT);
-        var canvas = new Canvas(WIDTH, HEIGHT);
+        var sceneAcceuil = new Scene(root, WIDTH, HEIGHT);
+        root.setBackground(Background.fill(Color.BLUE));
+        Canvas canvas = new Canvas(WIDTH, HEIGHT);
+        var context = canvas.getGraphicsContext2D();
+        var context2 = canvas.getGraphicsContext2D();
 
         root.getChildren().add(canvas);
-        var contextCharlotte = canvas.getGraphicsContext2D();
 
 
-        var charlotte = new Personnage(0,0, 100,100);
+        Personnage charlotte = new Personnage(3, 3, 102, 90);
+        Random r =new Random();
 
-        scene.setOnKeyPressed((e) -> {
-            if (e.getCode() == KeyCode.ESCAPE) {
+
+
+        Poissons poissons = new Poissons(WIDTH+50 , r.nextDouble(HEIGHT/4,HEIGHT/2),100,100,r.nextDouble(-100,100));
+        sceneAcceuil.setOnKeyPressed((e) -> {
+            if (e.getCode() == KeyCode.SPACE) {
+                long tempsActuel  = System.nanoTime();
 // Ferme JavaFX
-                Platform.exit();
+                if (tempsActuel- lastProjectileTime > projectileCooldown) {
+                    setLancerProjectile(true);
+
+                    projectiles.add(new Projectile(charlotte.getX(), charlotte.getY(), 3, 3));
+                    lastProjectileTime = tempsActuel;
+                }
             } else {
                 Input.setKeyPressed(e.getCode(), true);
             }
         });
-        scene.setOnKeyReleased((e) -> {
+        sceneAcceuil.setOnKeyReleased((e) -> {
             Input.setKeyPressed(e.getCode(), false);
         });
 
@@ -48,38 +81,40 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
 
+
                 double deltaTemps = (now - lastTime) * 1e-9;
 
-
-                /* -- Update --
-                for (var flocon : flocons)
-                    flocon.update(deltaTemps);
-                */
-
-                contextCharlotte.clearRect(0,0, WIDTH, HEIGHT);
-
-                // -- Dessin --
-                // Arrière-plan
-               contextCharlotte.setFill(Color.BLUE);
-               contextCharlotte.fillRect(0, 0, WIDTH, HEIGHT);
-
+                poissons.update(deltaTemps);
 
                 charlotte.update(deltaTemps);
+                charlotte.setX(charlotte.getX());
+                charlotte.setY(charlotte.getY());
 
-                charlotte.draw(contextCharlotte);
+                for (Projectile projectile : projectiles) {
+                    if (isLancerProjectile() && projectile != null) {
+                        projectile.update(deltaTemps);
+                        projectile.encolission(poissons);
+                    }
+                }
 
-                /*
-                for (var flocon : flocons)
-                    flocon.draw(context);
-                */
+// Dans la boucle de dessin
 
-                lastTime = now;
-            }
+                context.clearRect(0, 0, WIDTH, HEIGHT);
+                poissons.draw(context);
+                charlotte.draw(context);
+
+                for (Projectile projectile : projectiles) {
+                    if (isLancerProjectile() && projectile != null) {
+                        projectile.draw(context);
+                    }
+
+                }  lastTime = now;}
         };
         timer.start();
 
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Animations!");
-        primaryStage.show();
+
+        scene.setScene(sceneAcceuil);
+        scene.setResizable(false);
+        scene.show();
     }
 }
