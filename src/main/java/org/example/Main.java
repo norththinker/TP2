@@ -100,15 +100,17 @@ public class Main extends Application {
 // Dans la boucle de dessin
 
                 context.clearRect(0, 0, WIDTH, HEIGHT);
-                poissons.draw(context);
-                charlotte.draw(context);
 
                 for (Projectile projectile : projectiles) {
                     if (isLancerProjectile() && projectile != null) {
                         projectile.draw(context);
                     }
 
-                }  lastTime = now;}
+                }
+                poissons.draw(context);
+                charlotte.draw(context);
+
+                 lastTime = now;}
         };
         timer.start();
 

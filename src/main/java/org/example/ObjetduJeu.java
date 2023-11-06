@@ -5,16 +5,13 @@ import javafx.scene.paint.Color;
 
 public class ObjetduJeu {
 
-
-
-
-
-
     private double x, y;
     private double w;
     private double h;
-    private double vx  ;
-    private double vy  ;
+    private double vx;
+    private double vy;
+
+
     public boolean isEstTouche() {
         return estTouche;
     }
