@@ -48,19 +48,18 @@ public class Projectile extends ObjetduJeu{
     }
 
 
-    public boolean enCollisionAvec(ObjetduJeu objetduJeu) {
-        double dx = this.x - objetduJeu.getX();
-        double dy = this.y - objetduJeu.getY();
+    public boolean enCollisionAvec(Poissons poisson) {
+        double dx = this.x - poisson.getX();
+        double dy = this.y - poisson.getY();
         double dCarre = dx * dx + dy * dy;
-        return dCarre < (this.w/2 + objetduJeu.getW()/2) * (this.w/2 + objetduJeu.getW()/2) + (this.h/2 + objetduJeu.getH()/2) * (this.h/2 + objetduJeu.getW()/2);
-
+        return dCarre < (this.w/2 + poisson.getW()/2) * (this.w/2 + poisson.getW()/2) + (this.h/2 + poisson.getH()/2) * (this.h/2 + poisson.getW()/2);
 
 
     }
-    public void testCollision(ObjetduJeu autre) {
-        if (this.enCollisionAvec(autre)) {
-
-         autre.setEstTouche(true);
+    public void testCollision(Poissons poisson) {
+        if (this.enCollisionAvec(poisson)) {
+            poisson.setMort(true);
+         poisson.setEstTouche(true);
         }
     }
 

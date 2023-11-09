@@ -10,6 +10,15 @@ public class Poissons extends ObjetduJeu {
     private double h;
     private double ax;
     private double ay;
+    private boolean mort = false;
+
+    public boolean isMort() {
+        return mort;
+    }
+
+    public void setMort(boolean mort) {
+        this.mort = mort;
+    }
 
     @Override
     public double getX() {

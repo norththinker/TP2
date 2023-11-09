@@ -20,7 +20,7 @@ import java.util.Random;
 public class Main extends Application {
     public static final double WIDTH = 900, HEIGHT = 520;
 
-
+    private Image poissonEnnemi = new Image("poisson1.png");
 
     public static void main(String[] args) {
         launch(args);
@@ -33,6 +33,7 @@ public class Main extends Application {
     public void setLancerProjectile(boolean lancerProjectile) {
         this.lancerProjectile = lancerProjectile;
     }
+
     private ArrayList<Projectile> projectiles = new ArrayList<>();
     private boolean lancerProjectile;
     private long lastProjectileTime = 0;
@@ -51,18 +52,19 @@ public class Main extends Application {
 
 
         Personnage charlotte = new Personnage(3, 3, 102, 90);
-        Random r =new Random();
+        Random r = new Random();
 
-Poissons poissons1[] = new Poissons[5];
-        for (int i = 0; i < 5; i++) {
-            poissons1[i] = new Poissons(WIDTH+50 , r.nextDouble(HEIGHT/4,HEIGHT/2),90,90,r.nextDouble(-100,100));
+        Poissons poissons1[] = new Poissons[3];
+        for (int i = 0; i < poissons1.length; i++) {
+            poissons1[i] = new Poissons(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
+                    poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100));
         }
 
         sceneAcceuil.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
-                long tempsActuel  = System.nanoTime();
+                long tempsActuel = System.nanoTime();
 // Ferme JavaFX
-                if (tempsActuel- lastProjectileTime > projectileCooldown) {
+                if (tempsActuel - lastProjectileTime > projectileCooldown) {
                     setLancerProjectile(true);
 
                     projectiles.add(new Projectile(charlotte.getX(), charlotte.getY(), 3, 3));
@@ -98,10 +100,10 @@ Poissons poissons1[] = new Poissons[5];
                     for (int i = 0; i < poissons1.length; i++) {
 
 
-                    if (isLancerProjectile() && projectile != null) {
-                        projectile.update(deltaTemps);
-                        projectile.testCollision(poissons1[i]);
-                    }
+                        if (isLancerProjectile() && projectile != null) {
+                            projectile.update(deltaTemps);
+                            projectile.testCollision(poissons1[i]);
+                        }
                     }
                 }
 
@@ -116,12 +118,14 @@ Poissons poissons1[] = new Poissons[5];
 
                 }
                 for (int i = 0; i < poissons1.length; i++) {
-                poissons1[i].draw(context);
+                    if (!poissons1[i].isMort())
+                        poissons1[i].draw(context);
 
                 }
 
 
-                 lastTime = now;}
+                lastTime = now;
+            }
         };
         timer.start();
 
