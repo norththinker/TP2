@@ -11,6 +11,27 @@ public class Personnage extends ObjetduJeu {
     private double w;
     private double h;
 
+    @Override
+    public boolean isEstTouche() {
+        return estTouche;
+    }
+
+    @Override
+    public void setEstTouche(boolean estTouche) {
+        this.estTouche = estTouche;
+    }
+
+    public int getCompteur() {
+        return compteur;
+    }
+
+    public void setCompteur(int compteur) {
+        this.compteur = compteur;
+    }
+
+    private boolean estTouche = false;
+    private int compteur;
+
     public void setX(double x) {
         this.x = x;
     }
@@ -118,6 +139,7 @@ public class Personnage extends ObjetduJeu {
         context.setLineWidth(2.0);
         context.strokeRect(x,y,w,h);
 
+
     }
 
     public void update(double deltaTemps) {
@@ -195,5 +217,19 @@ public class Personnage extends ObjetduJeu {
         }
     }
 
+    public boolean enCollisionAvec(Poissons poisson) {
+        double dx = this.x - poisson.getX();
+        double dy = this.y - poisson.getY();
+        double dCarre = dx * dx + dy * dy;
+        return dCarre < (this.w/2 + poisson.getW()/2) * (this.w/2 + poisson.getW()/2) + (this.h/2 + poisson.getH()/2) * (this.h/2 + poisson.getW()/2);
 
+
+    }
+    public void testCollision(Poissons poisson) {
+        if (this.enCollisionAvec(poisson)) {
+            System.out.println(1);
+           estTouche = true;
+           compteur++;
+        }
+    }
 }

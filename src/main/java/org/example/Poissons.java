@@ -12,6 +12,8 @@ public class Poissons extends ObjetduJeu {
     private double ay;
     private boolean mort = false;
 
+
+
     public boolean isMort() {
         return mort;
     }
@@ -158,5 +160,21 @@ context.clearRect(x,y,w,h);
 
 
     }
+    public boolean enCollisionAvec(Personnage poisson) {
+        double dx = this.x - poisson.getX();
+        double dy = this.y - poisson.getY();
+        double dCarre = dx * dx + dy * dy;
+        return dCarre < (this.w/2 + poisson.getW()/2) * (this.w/2 + poisson.getW()/2) + (this.h/2 + poisson.getH()/2) * (this.h/2 + poisson.getW()/2);
 
-}
+
+    }
+    public void testCollision(Personnage poisson) {
+        if (this.enCollisionAvec(poisson)) {
+            if (!poisson.isEstTouche()) {
+            System.out.println(1);
+            poisson.setEstTouche(true); }
+         poisson.setCompteur(poisson.getCompteur()+1);
+        }
+
+
+}}

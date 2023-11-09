@@ -54,10 +54,10 @@ public class Main extends Application {
         Personnage charlotte = new Personnage(3, 3, 102, 90);
         Random r = new Random();
 
-        Poissons poissons1[] = new Poissons[3];
-        for (int i = 0; i < poissons1.length; i++) {
-            poissons1[i] = new Poissons(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
-                    poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100));
+        ArrayList <Poissons> poissons1= new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            poissons1.add( new Poissons(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
+                    poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100)));
         }
 
         sceneAcceuil.setOnKeyPressed((e) -> {
@@ -87,8 +87,11 @@ public class Main extends Application {
 
 
                 double deltaTemps = (now - lastTime) * 1e-9;
-                for (int i = 0; i < poissons1.length; i++) {
-                    poissons1[i].update(deltaTemps);
+                for (int i = 0; i < poissons1.size(); i++) {
+
+                    poissons1.get(i).update(deltaTemps);
+                    if(!charlotte.isEstTouche()){
+                        poissons1.get(i).testCollision(charlotte); }
                 }
 
 
@@ -97,16 +100,18 @@ public class Main extends Application {
                 charlotte.setY(charlotte.getY());
 
                 for (Projectile projectile : projectiles) {
-                    for (int i = 0; i < poissons1.length; i++) {
+                    if (isLancerProjectile() && projectile != null) {
+                        projectile.update(deltaTemps);
 
 
-                        if (isLancerProjectile() && projectile != null) {
-                            projectile.update(deltaTemps);
-                            projectile.testCollision(poissons1[i]);
-                        }
+                    }
+                    for (Poissons poissons : poissons1) {
+
+                        projectile.testCollision(poissons);
+
                     }
                 }
-
+                poissons1.removeIf(Poissons::isEstTouche);
 // Dans la boucle de dessin
 
                 context.clearRect(0, 0, WIDTH, HEIGHT);
@@ -117,9 +122,9 @@ public class Main extends Application {
                     }
 
                 }
-                for (int i = 0; i < poissons1.length; i++) {
-                    if (!poissons1[i].isMort())
-                        poissons1[i].draw(context);
+                for (int i = 0; i < poissons1.size(); i++) {
+                    if (!poissons1.get(i).isMort())
+                        poissons1.get(i).draw(context);
 
                 }
 
