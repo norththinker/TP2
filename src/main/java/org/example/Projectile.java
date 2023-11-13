@@ -24,8 +24,6 @@ public class Projectile extends ObjetduJeu{
         context.setFill(Color.rgb(200, 200, 200, 0));
         context.fillRect(x, y, w, h);
         context.drawImage(logoView, x, y);
-
-
     }
 
     public void update(double deltaTemps) {

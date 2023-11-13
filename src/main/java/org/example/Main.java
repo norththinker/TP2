@@ -2,11 +2,9 @@ package org.example;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
@@ -14,8 +12,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
-
 
 public class Main extends Application {
     public static final double WIDTH = 900, HEIGHT = 520;
@@ -46,7 +44,6 @@ public class Main extends Application {
         root.setBackground(Background.fill(Color.BLUE));
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         var context = canvas.getGraphicsContext2D();
-        var context2 = canvas.getGraphicsContext2D();
 
         root.getChildren().add(canvas);
 
@@ -54,7 +51,7 @@ public class Main extends Application {
         Personnage charlotte = new Personnage(3, 3, 102, 90);
         Random r = new Random();
 
-        ArrayList <Poissons> poissons1= new ArrayList<>();
+        LinkedList<Poissons> poissons1= new LinkedList<>();
         for (int i = 0; i < 3; i++) {
             poissons1.add( new Poissons(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
                     poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100)));
@@ -87,11 +84,12 @@ public class Main extends Application {
 
 
                 double deltaTemps = (now - lastTime) * 1e-9;
-                for (int i = 0; i < poissons1.size(); i++) {
+                for (Poissons value : poissons1) {
 
-                    poissons1.get(i).update(deltaTemps);
-                    if(!charlotte.isEstTouche()){
-                        poissons1.get(i).testCollision(charlotte); }
+                    value.update(deltaTemps);
+                    if (!charlotte.isEstTouche()) {
+                        value.testCollision(charlotte);
+                    }
                 }
 
 
@@ -102,8 +100,6 @@ public class Main extends Application {
                 for (Projectile projectile : projectiles) {
                     if (isLancerProjectile() && projectile != null) {
                         projectile.update(deltaTemps);
-
-
                     }
                     for (Poissons poissons : poissons1) {
 
@@ -123,7 +119,6 @@ public class Main extends Application {
 
                 }
                 for (int i = 0; i < poissons1.size(); i++) {
-                    if (!poissons1.get(i).isMort())
                         poissons1.get(i).draw(context);
 
                 }

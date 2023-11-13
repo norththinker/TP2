@@ -135,7 +135,7 @@ public class Poissons extends ObjetduJeu {
         context.setLineWidth(2.0);
         context.strokeRect(x,y,w,h);
         if ( estTouche) {
-context.clearRect(x,y,w,h);
+            context.clearRect(x,y,w,h);
 
         }
 
