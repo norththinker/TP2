@@ -1,6 +1,8 @@
 package org.example;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -10,6 +12,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -52,10 +55,8 @@ public class Main extends Application {
         Random r = new Random();
 
         LinkedList<Poissons> poissons1= new LinkedList<>();
-        for (int i = 0; i < 3; i++) {
-            poissons1.add( new Poissons(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
-                    poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100)));
-        }
+        var poissonSpawnTimeline = getTimeline(poissons1, r);
+        poissonSpawnTimeline.play();
 
         sceneAcceuil.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
@@ -133,5 +134,23 @@ public class Main extends Application {
         scene.setScene(sceneAcceuil);
         scene.setResizable(false);
         scene.show();
+    }
+
+    private Timeline getTimeline(LinkedList<Poissons> poissons1, Random r) {
+        var poissonSpawnTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(1.75), event -> {
+                    // Code pour créer un nouveau poisson
+
+
+
+
+                    for (int i = 0; i < 3; i++) {
+                        poissons1.add( new Poissons(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
+                                poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100)));
+                    }
+                })
+        );
+        poissonSpawnTimeline.setCycleCount(Timeline.INDEFINITE);
+        return poissonSpawnTimeline;
     }
 }
