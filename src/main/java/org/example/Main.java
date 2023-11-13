@@ -55,7 +55,20 @@ public class Main extends Application {
         Random r = new Random();
 
         LinkedList<Poissons> poissons1= new LinkedList<>();
-        var poissonSpawnTimeline = getTimeline(poissons1, r);
+        var poissonSpawnTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(1.75), event -> {
+                    // Code pour créer un nouveau poisson
+
+
+
+
+                    for (int i = 0; i < 3; i++) {
+                        poissons1.add( new Poissons(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
+                                poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100)));
+                    }
+                })
+        );
+        poissonSpawnTimeline.setCycleCount(Timeline.INDEFINITE);
         poissonSpawnTimeline.play();
 
         sceneAcceuil.setOnKeyPressed((e) -> {
@@ -134,23 +147,5 @@ public class Main extends Application {
         scene.setScene(sceneAcceuil);
         scene.setResizable(false);
         scene.show();
-    }
-
-    private Timeline getTimeline(LinkedList<Poissons> poissons1, Random r) {
-        var poissonSpawnTimeline = new Timeline(
-                new KeyFrame(Duration.seconds(1.75), event -> {
-                    // Code pour créer un nouveau poisson
-
-
-
-
-                    for (int i = 0; i < 3; i++) {
-                        poissons1.add( new Poissons(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
-                                poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100)));
-                    }
-                })
-        );
-        poissonSpawnTimeline.setCycleCount(Timeline.INDEFINITE);
-        return poissonSpawnTimeline;
     }
 }
