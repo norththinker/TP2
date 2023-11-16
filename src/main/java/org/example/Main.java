@@ -62,7 +62,7 @@ public class Main extends Application {
                 long tempsActuel = System.nanoTime();
                 if (tempsActuel - lastProjectileTime > projectileCooldown) {
                     setLancerProjectile(true);
-                    projectiles.add(new Projectile(charlotte.getX(), charlotte.getY(), 36, 35));
+                    projectiles.add(new Projectile(charlotte.getX() + charlotte.w/2 - 36/2, charlotte.getY() + charlotte.h/2 - 35/2, 36, 35));
                     lastProjectileTime = tempsActuel;
                 }
             } else {
@@ -116,18 +116,33 @@ public class Main extends Application {
                 context.clearRect(0, 0, WIDTH, HEIGHT);
 
                 // 5. Draw entities on the canvas
-                charlotte.draw(context);
+                for (Poisson poissonEnnemi : poissonsEnnemis) {
+                    poissonEnnemi.draw(context);
+                }
 
                 for (Projectile projectile : projectiles) {
                     if (isLancerProjectile() && projectile != null) {
                         projectile.draw(context);
                     }
                 }
+                charlotte.draw(context);
 
-                for (Poisson poissonEnnemi : poissonsEnnemis) {
-                    poissonEnnemi.draw(context);
-                }
+                // Dessiner le rectangle blanc proportionnel au nombre de vies
+                double largeurBarreVie = 150; // Ajustez la largeur de la barre de vie selon vos besoins
+                double hauteurBarreVie = 30; // Ajustez la hauteur de la barre de vie selon vos besoins
+                double positionHorizontaleBarre = 20; // Ajustez la position X de la barre de vie selon vos besoins
+                double positionVerticaleBarre = 10; // Ajustez la position Y de la barre de vie selon vos besoins
 
+                double pourcentageVie = (double) charlotte.getNombreDeVie() / charlotte.getNombreDeVieMax();
+                double largeurRemplie = pourcentageVie * largeurBarreVie;
+
+                context.setFill(Color.BLUE);
+                context.fillRect(positionHorizontaleBarre, positionVerticaleBarre, largeurBarreVie, hauteurBarreVie);
+                context.setFill(Color.WHITE);
+                context.fillRect(positionHorizontaleBarre, positionVerticaleBarre, largeurRemplie, hauteurBarreVie);
+                context.setStroke(Color.WHITE);
+                context.setLineWidth(1.0);
+                context.strokeRect(positionHorizontaleBarre, positionVerticaleBarre, largeurBarreVie, hauteurBarreVie);
                 lastTime = now;
             }
         };
