@@ -20,7 +20,7 @@ import java.util.Random;
 
 public class Main extends Application {
     public static final double WIDTH = 900, HEIGHT = 520;
-
+    Random r = new Random();
     private Image poissonEnnemi = new Image("poisson1.png");
 
     public static void main(String[] args) {
@@ -52,33 +52,17 @@ public class Main extends Application {
 
 
         Personnage charlotte = new Personnage(3, 3, 102, 90);
-        Random r = new Random();
 
-        LinkedList<Poissons> poissons1= new LinkedList<>();
-        var poissonSpawnTimeline = new Timeline(
-                new KeyFrame(Duration.seconds(1.75), event -> {
-                    // Code pour créer un nouveau poisson
-
-
-
-
-                    for (int i = 0; i < 3; i++) {
-                        poissons1.add( new Poissons(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
-                                poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100)));
-                    }
-                })
-        );
-        poissonSpawnTimeline.setCycleCount(Timeline.INDEFINITE);
+        LinkedList<Poisson> poissonsEnnemis= new LinkedList<>();
+        var poissonSpawnTimeline = getTimeline(poissonsEnnemis);
         poissonSpawnTimeline.play();
 
         sceneAcceuil.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
                 long tempsActuel = System.nanoTime();
-// Ferme JavaFX
                 if (tempsActuel - lastProjectileTime > projectileCooldown) {
                     setLancerProjectile(true);
-
-                    projectiles.add(new Projectile(charlotte.getX(), charlotte.getY(), 3, 3));
+                    projectiles.add(new Projectile(charlotte.getX(), charlotte.getY(), 36, 35));
                     lastProjectileTime = tempsActuel;
                 }
             } else {
@@ -95,48 +79,54 @@ public class Main extends Application {
 
             @Override
             public void handle(long now) {
-
-
                 double deltaTemps = (now - lastTime) * 1e-9;
-                for (Poissons value : poissons1) {
 
-                    value.update(deltaTemps);
-                    if (!charlotte.isEstTouche()) {
-                        value.testCollision(charlotte);
-                    }
-                }
-
-
+                // 1. Update game entities
                 charlotte.update(deltaTemps);
-                charlotte.setX(charlotte.getX());
-                charlotte.setY(charlotte.getY());
+
+                for (Poisson ennemi : poissonsEnnemis) {
+                    ennemi.update(deltaTemps);
+                }
 
                 for (Projectile projectile : projectiles) {
                     if (isLancerProjectile() && projectile != null) {
                         projectile.update(deltaTemps);
                     }
-                    for (Poissons poissons : poissons1) {
+                }
 
-                        projectile.testCollision(poissons);
+                // 2. Check for collisions
+                for (Poisson ennemi : poissonsEnnemis) {
+                    if (!charlotte.isEstTouche()) {
+                        charlotte.testCollision(ennemi);
+                    }
 
+                    for (Projectile projectile : projectiles) {
+                        ennemi.testCollision(projectile);
                     }
                 }
-                poissons1.removeIf(Poissons::isEstTouche);
-// Dans la boucle de dessin
 
+                for (Poisson poissonEnnemi : poissonsEnnemis) {
+                    charlotte.testCollision(poissonEnnemi);
+                }
+
+                // 3. Remove entities marked as "touched"
+                poissonsEnnemis.removeIf(Poisson::isEstTouche);
+
+                // 4. Clear the canvas
                 context.clearRect(0, 0, WIDTH, HEIGHT);
+
+                // 5. Draw entities on the canvas
                 charlotte.draw(context);
+
                 for (Projectile projectile : projectiles) {
                     if (isLancerProjectile() && projectile != null) {
                         projectile.draw(context);
                     }
-
-                }
-                for (int i = 0; i < poissons1.size(); i++) {
-                        poissons1.get(i).draw(context);
-
                 }
 
+                for (Poisson poissonEnnemi : poissonsEnnemis) {
+                    poissonEnnemi.draw(context);
+                }
 
                 lastTime = now;
             }
@@ -147,5 +137,23 @@ public class Main extends Application {
         scene.setScene(sceneAcceuil);
         scene.setResizable(false);
         scene.show();
+    }
+
+    private Timeline getTimeline(LinkedList<Poisson> poissonsEnnemis) {
+        var poissonSpawnTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(1.75), event -> {
+                    // Code pour créer un nouveau poisson
+
+
+
+
+                    for (int i = 0; i < r.nextDouble(1,5); i++) {
+                        poissonsEnnemis.add( new PoissonEnnemi(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
+                                poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100)));
+                    }
+                })
+        );
+        poissonSpawnTimeline.setCycleCount(Timeline.INDEFINITE);
+        return poissonSpawnTimeline;
     }
 }

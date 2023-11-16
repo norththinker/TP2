@@ -1,37 +1,32 @@
 package org.example;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 
-public class Personnage extends ObjetduJeu {
+public class Personnage extends Poisson {
 
-    private double x, y, w, h;
-    private double vx, vy, ax, ay;
-    private boolean estTouche = false;
-    private int compteur;
     private Image charlotteImageActuelle = new Image("charlotte.png");
     private final Image charlotteNormalImage = new Image("charlotte.png");
     private final Image charlotteAvantImage = new Image("charlotte-avant.png");
+    private final Image charlotteOutchImage = new Image("charlotte-outch.png");
+
+    private boolean clignote = false;
+    private long flashingStartTime;
 
     public Personnage(double x, double y, double w, double h) {
-        this.x = x;
-        this.y = y;
+        imageObjet = charlotteImageActuelle;
+        this.x = Main.WIDTH / 2;
+        this.y = Main.HEIGHT / 2;
         this.w = w;
         this.h = h;
     }
 
-    public void draw(GraphicsContext context) {
-        context.setFill(Color.rgb(200, 200, 200, 0));
-        context.fillRect(x, y, w, h);
-        context.drawImage(charlotteImageActuelle, x, y);
-        context.setStroke(Color.YELLOW);
-        context.setLineWidth(2.0);
-        context.strokeRect(x, y, w, h);
-    }
-
+    @Override
     public void update(double deltaTemps) {
+        if (clignote) {
+            continueClignotage();
+        }
+
         double vitesseMax = 300;
         vx = limiter(vx + deltaTemps * ax, -vitesseMax, vitesseMax);
         vy = limiter(vy + deltaTemps * ay, -vitesseMax, vitesseMax);
@@ -57,91 +52,49 @@ public class Personnage extends ObjetduJeu {
     }
 
     private void toCharlotteAvant(boolean charlotteBouge) {
-        if (charlotteBouge)
-            charlotteImageActuelle = charlotteAvantImage;
-        else
-            charlotteImageActuelle = charlotteNormalImage;
-    }
+        if (charlotteBouge && !clignote)
+            imageObjet = charlotteAvantImage;
 
-    private void gererHorsEcran() {
-        y = Math.min(Main.HEIGHT - h, Math.max(0, y));
-        x = Math.min(Main.WIDTH - w, Math.max(0, x));
-    }
-
-    private double limiter(double valeur, double min, double max) {
-        return Math.min(max, Math.max(min, valeur));
+        else if (!charlotteBouge && !clignote) {
+            imageObjet = charlotteNormalImage;
+        }
     }
 
     @Override
-    public double getX() {
-        return x;
+    public void testCollision(ObjetduJeu autreObjet) {
+        if (this.enCollisionAvec(autreObjet)) {
+            this.estTouche = true;
+            commencerClignotage();
+        }
     }
 
-    @Override
-    public void setX(double x) {
-        this.x = x;
+    public void commencerClignotage() {
+        if (!clignote) {
+            clignote = true;
+            flashingStartTime = System.nanoTime();
+            imageObjet = charlotteOutchImage;
+        }
     }
 
-    @Override
-    public double getY() {
-        return y;
-    }
+    public void continueClignotage() {
+        long tempsEcoule = System.nanoTime() - flashingStartTime;
+        long dureeClignotage = 2000000000; // 2 secondes
 
-    @Override
-    public void setY(double y) {
-        this.y = y;
-    }
+        if (tempsEcoule < dureeClignotage) {
+            long intervalClignotage = 250000000; // 0.25 seconde
+            long flashCycleTime = tempsEcoule % (2 * intervalClignotage);
 
-    @Override
-    public double getW() {
-        return w;
-    }
-
-    @Override
-    public void setW(double w) {
-        this.w = w;
-    }
-
-    @Override
-    public double getH() {
-        return h;
-    }
-
-    @Override
-    public void setH(double h) {
-        this.h = h;
-    }
-
-    @Override
-    public double getVx() {
-        return vx;
-    }
-
-    @Override
-    public void setVx(double vx) {
-        this.vx = vx;
-    }
-
-    @Override
-    public double getVy() {
-        return vy;
-    }
-    @Override
-    public void setVy(double vy) {
-        this.vy = vy;
-    }
-    @Override
-    public boolean isEstTouche() {
-        return estTouche;
-    }
-    @Override
-    public void setEstTouche(boolean estTouche) {
-        this.estTouche = estTouche;
-    }
-    public int getCompteur() {
-        return compteur;
-    }
-    public void setCompteur(int compteur) {
-        this.compteur = compteur;
+            if (flashCycleTime < intervalClignotage) {
+                // Montrer charlotteOutchImage pour lse premiers 0.25 seconde
+                imageObjet = charlotteOutchImage;
+            } else {
+                // Montrer aucune image pour les autres 0.25 seconde
+                imageObjet = null;
+            }
+        } else {
+            // Après 2 secondes, le clignotage finit et on change l'image à charlotteNormalImage
+            imageObjet = charlotteNormalImage;
+            clignote = false;
+        }
     }
 }

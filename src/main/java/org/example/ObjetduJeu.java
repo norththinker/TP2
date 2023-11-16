@@ -1,28 +1,44 @@
 package org.example;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-public class ObjetduJeu {
+public abstract class ObjetduJeu {
 
-    private double x, y;
-    private double w;
-    private double h;
-    private double vx;
-    private double vy;
+    protected Image imageObjet;
+    protected double x, y, w, h;
+    protected double ax, ay;
+    protected double vx, vy;
+    protected boolean estTouche = false;
 
-
-    public boolean isEstTouche() {
-        return estTouche;
+    public void draw(GraphicsContext context) {
+        context.setFill(Color.rgb(200, 200, 200, 0));
+        context.fillRect(x, y, w, h);
+        context.drawImage(imageObjet, x, y);
+        context.setStroke(Color.YELLOW);
+        context.setLineWidth(2.0);
+        context.strokeRect(x, y, w, h);
     }
 
-    public void setEstTouche(boolean estTouche) {
-        this.estTouche = estTouche;
+    public abstract void update(double deltaTemps);
+
+    public boolean enCollisionAvec(ObjetduJeu autreObjet) {
+
+        return (this.x < autreObjet.x + autreObjet.w &&
+                this.x + this.w > autreObjet.x &&
+                this.y < autreObjet.y + autreObjet.h &&
+                this.y + this.h > autreObjet.y);
     }
 
-    private boolean estTouche =false;
-    public ObjetduJeu() {
+    public abstract void testCollision(ObjetduJeu autreObjet);
 
+    public Image getImageObjet() {
+        return imageObjet;
+    }
+
+    public void setImageObjet(Image imageObjet) {
+        this.imageObjet = imageObjet;
     }
 
     public double getX() {
@@ -57,6 +73,22 @@ public class ObjetduJeu {
         this.h = h;
     }
 
+    public double getAx() {
+        return ax;
+    }
+
+    public void setAx(double ax) {
+        this.ax = ax;
+    }
+
+    public double getAy() {
+        return ay;
+    }
+
+    public void setAy(double ay) {
+        this.ay = ay;
+    }
+
     public double getVx() {
         return vx;
     }
@@ -73,36 +105,11 @@ public class ObjetduJeu {
         this.vy = vy;
     }
 
-    public ObjetduJeu(double x, double y, double w, double h) {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
-
+    public boolean isEstTouche() {
+        return estTouche;
     }
 
-    public void draw(GraphicsContext context) {
-
-
-
-    }
-
-    public void update(double deltaTemps) {
-
-
-        x += deltaTemps * vx;
-        y += deltaTemps * vy;
-
-
-
-
-        if (y + h > Main.HEIGHT) {
-
-            // Déplace les flocons vers le haut
-            y = Main.HEIGHT - h;
-
-
-        }
-
+    public void setEstTouche(boolean estTouche) {
+        this.estTouche = estTouche;
     }
 }
