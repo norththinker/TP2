@@ -4,14 +4,15 @@ import javafx.scene.image.Image;
 
 public class PoissonEnnemi extends Poisson {
 
-    public PoissonEnnemi(double x, double y, double w, double h, double vy) {
+    public PoissonEnnemi(double x, double y, double w, double h, double vy, Image imagePoisson) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.vy = vy;
+        this.ax = -500;
         vx = -(100 * Math.pow(1, 0.33) + 200);
-        imageObjet = new Image("poisson1.png");
+        imageObjet = imagePoisson;
     }
 
 
@@ -20,9 +21,14 @@ public class PoissonEnnemi extends Poisson {
         x += deltaTemps * vx;
         y += deltaTemps * vy;
 
-        if (y + h > Main.HEIGHT) {
-            y = Main.HEIGHT - h;
-        }
+        vx = vx + deltaTemps * ax;
+
+        gererHorsEcran();
+    }
+
+    @Override
+    protected void gererHorsEcran() {
+        gererEnY();
     }
 
     @Override

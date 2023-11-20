@@ -21,24 +21,12 @@ import java.util.Random;
 public class Main extends Application {
     public static final double WIDTH = 900, HEIGHT = 520;
     Random r = new Random();
-    private Image poissonEnnemi = new Image("poisson1.png");
 
     public static void main(String[] args) {
         launch(args);
     }
 
-    public boolean isLancerProjectile() {
-        return lancerProjectile;
-    }
-
-    public void setLancerProjectile(boolean lancerProjectile) {
-        this.lancerProjectile = lancerProjectile;
-    }
-
     private ArrayList<Projectile> projectiles = new ArrayList<>();
-    private boolean lancerProjectile;
-    private long lastProjectileTime = 0;
-    private final long projectileCooldown = 500_000_000;
 
     @Override
     public void start(Stage scene) {
@@ -51,19 +39,17 @@ public class Main extends Application {
         root.getChildren().add(canvas);
 
 
-        Personnage charlotte = new Personnage(3, 3, 102, 90);
+        Personnage charlotte = new Personnage(0, Main.HEIGHT/2, 102, 90);
 
-        LinkedList<Poisson> poissonsEnnemis= new LinkedList<>();
+        LinkedList<Poisson> poissonsEnnemis = new LinkedList<>();
         var poissonSpawnTimeline = getTimeline(poissonsEnnemis);
         poissonSpawnTimeline.play();
 
         sceneAcceuil.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
-                long tempsActuel = System.nanoTime();
-                if (tempsActuel - lastProjectileTime > projectileCooldown) {
-                    setLancerProjectile(true);
-                    projectiles.add(new Projectile(charlotte.getX() + charlotte.w/2 - 36/2, charlotte.getY() + charlotte.h/2 - 35/2, 36, 35));
-                    lastProjectileTime = tempsActuel;
+                if (Projectile.peutLancer()) {
+                    projectiles.add(new Etoile(charlotte.getX() + charlotte.w / 2 - 36 / 2,
+                            charlotte.getY() + charlotte.h / 2 - 35 / 2, 36, 35));
                 }
             } else {
                 Input.setKeyPressed(e.getCode(), true);
@@ -89,9 +75,11 @@ public class Main extends Application {
                 }
 
                 for (Projectile projectile : projectiles) {
-                    if (isLancerProjectile() && projectile != null) {
-                        projectile.update(deltaTemps);
+                    if (projectile.isDepasse()) {
+                        projectiles.remove(projectile);
+                        return;
                     }
+                    projectile.update(deltaTemps);
                 }
 
                 // 2. Check for collisions
@@ -121,7 +109,7 @@ public class Main extends Application {
                 }
 
                 for (Projectile projectile : projectiles) {
-                    if (isLancerProjectile() && projectile != null) {
+                    if (projectile != null) {
                         projectile.draw(context);
                     }
                 }
@@ -141,8 +129,21 @@ public class Main extends Application {
                 context.setFill(Color.WHITE);
                 context.fillRect(positionHorizontaleBarre, positionVerticaleBarre, largeurRemplie, hauteurBarreVie);
                 context.setStroke(Color.WHITE);
-                context.setLineWidth(1.0);
+                context.setLineWidth(2.0);
                 context.strokeRect(positionHorizontaleBarre, positionVerticaleBarre, largeurBarreVie, hauteurBarreVie);
+
+                //Ajouter le projectile utilisé à côté de la barre.
+                context.setFill(Color.BLUE);
+                context.drawImage(Projectile.imageProjectile, positionHorizontaleBarre + largeurBarreVie+10,
+                        positionVerticaleBarre, Projectile.imageProjectile.getWidth(),
+                        Projectile.imageProjectile.getHeight());
+
+                //dessiner les cœurs
+                context.setFill(Color.BLUE);
+                var proportionLargeurHauteur = 1872/365;
+                context.drawImage(new Image(charlotte.getNombreDeVie()+"vies.png"), positionHorizontaleBarre,
+                        positionVerticaleBarre + hauteurBarreVie + 20, largeurBarreVie, largeurBarreVie/proportionLargeurHauteur);
+
                 lastTime = now;
             }
         };
@@ -159,12 +160,15 @@ public class Main extends Application {
                 new KeyFrame(Duration.seconds(1.75), event -> {
                     // Code pour créer un nouveau poisson
 
-
-
-
-                    for (int i = 0; i < r.nextDouble(1,5); i++) {
-                        poissonsEnnemis.add( new PoissonEnnemi(WIDTH + 50, r.nextDouble(HEIGHT / 4, HEIGHT / 2),
-                                poissonEnnemi.getWidth(), poissonEnnemi.getHeight(), r.nextDouble(-100, 100)));
+                    for (int i = 0; i < r.nextInt(1, 6); i++) {
+                        var yInitiale = r.nextDouble((HEIGHT / 5), (4 * HEIGHT / 5));
+                        var vyInitial = r.nextDouble(-100, 100);
+                        var imagePoisson = new Image("poisson" + r.nextInt(1, 6) + ".png");
+                        var proportionLargeurHauteur = imagePoisson.getWidth()/imagePoisson.getHeight();
+                        var hauteur = r.nextInt(50, 121);
+                        var largeur = hauteur*proportionLargeurHauteur;
+                        poissonsEnnemis.add(new PoissonEnnemi(WIDTH, yInitiale,
+                                largeur, hauteur, vyInitial, imagePoisson));
                     }
                 })
         );

@@ -15,7 +15,7 @@ public abstract class ObjetduJeu {
     public void draw(GraphicsContext context) {
         context.setFill(Color.rgb(200, 200, 200, 0));
         context.fillRect(x, y, w, h);
-        context.drawImage(imageObjet, x, y);
+        context.drawImage(imageObjet, x, y, w, h);
         context.setStroke(Color.YELLOW);
         context.setLineWidth(2.0);
         context.strokeRect(x, y, w, h);
@@ -32,6 +32,13 @@ public abstract class ObjetduJeu {
     }
 
     public abstract void testCollision(ObjetduJeu autreObjet);
+    protected abstract void gererHorsEcran();
+    protected void gererEnX(){
+        x = Math.min(Main.WIDTH - w, Math.max(0, x));
+    }
+    protected void gererEnY(){
+        y = Math.min(Main.HEIGHT - h, Math.max(0, y));
+    }
 
     public Image getImageObjet() {
         return imageObjet;

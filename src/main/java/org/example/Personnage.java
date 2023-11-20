@@ -5,7 +5,6 @@ import javafx.scene.input.KeyCode;
 
 public class Personnage extends Poisson {
 
-    private Image charlotteImageActuelle = new Image("charlotte.png");
     private final Image charlotteNormalImage = new Image("charlotte.png");
     private final Image charlotteAvantImage = new Image("charlotte-avant.png");
     private final Image charlotteOutchImage = new Image("charlotte-outch.png");
@@ -16,7 +15,7 @@ public class Personnage extends Poisson {
     private long flashingStartTime;
 
     public Personnage(double x, double y, double w, double h) {
-        imageObjet = charlotteImageActuelle;
+        imageObjet = new Image("charlotte.png");
         this.x = x;
         this.y = y;
         this.w = w;
@@ -49,8 +48,8 @@ public class Personnage extends Poisson {
 
         toCharlotteAvant(charlotteBouge);
 
-        ax = left ? -1000 : right ? 1000 : -vx * 10;
-        ay = up ? -1000 : down ? 1000 : -vy * 10;
+        ax = left ? -1000 : right ? 1000 : -vx*5;
+        ay = up ? -1000 : down ? 1000 : -vy*5;
     }
 
     private void toCharlotteAvant(boolean charlotteBouge) {
@@ -60,6 +59,12 @@ public class Personnage extends Poisson {
         else if (!charlotteBouge && !clignote) {
             imageObjet = charlotteNormalImage;
         }
+    }
+
+    @Override
+    protected void gererHorsEcran() {
+        gererEnX();
+        gererEnY();
     }
 
     @Override
@@ -73,7 +78,10 @@ public class Personnage extends Poisson {
     public void commencerClignotage() {
         if (!clignote) {
             clignote = true;
-            nombreDeVie--;
+
+            if (nombreDeVie > 0)
+                nombreDeVie--;
+
             flashingStartTime = System.nanoTime();
             imageObjet = charlotteOutchImage;
         }
@@ -88,7 +96,7 @@ public class Personnage extends Poisson {
             long flashCycleTime = tempsEcoule % (2 * intervalClignotage);
 
             if (flashCycleTime < intervalClignotage) {
-                // Montrer charlotteOutchImage pour lse premiers 0.25 seconde
+                // Montrer charlotteOutchImage pour les premiers 0.25 seconde
                 imageObjet = charlotteOutchImage;
             } else {
                 // Montrer aucune image pour les autres 0.25 seconde

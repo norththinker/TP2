@@ -5,30 +5,31 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-public class Projectile extends ObjetduJeu {
+public abstract class Projectile extends ObjetduJeu {
+    protected static long tempsDernierProjectile = 0;
+    protected static final long delaiEntreProjectiles = 500_000_000;
+    protected final static Image imageProjectile = new Image("etoile.png");
+    protected boolean depasse = false;
 
-    public Projectile(double x, double y, double w, double h) {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
-        imageObjet = new Image("etoile.png");
-        vx = 300;
-    }
+
 
     @Override
-    public void update(double deltaTemps) {
-        x += deltaTemps * vx;
-
-        if (y + h > Main.HEIGHT) {
-            y = Main.HEIGHT - h;
+    protected void gererHorsEcran() {
+        if (x > Main.HEIGHT){
+            depasse = false;
         }
     }
-
-    @Override
-    public void testCollision(ObjetduJeu autreObjet) {
-        if (this.enCollisionAvec(autreObjet)) {
-            this.estTouche = true;
+    public static boolean peutLancer() {
+        long tempActuel = System.nanoTime();
+        if (tempActuel - tempsDernierProjectile > delaiEntreProjectiles) {
+            tempsDernierProjectile = tempActuel;
+            return true;
         }
+        return false;
     }
+
+    public boolean isDepasse() {
+        return depasse;
+    }
+
 }
