@@ -12,14 +12,21 @@ public abstract class ObjetduJeu {
     protected double vx, vy;
     protected boolean estTouche = false;
 
-    public void draw(GraphicsContext context) {
+    public void draw(GraphicsContext context, Camera camera) {
         context.setFill(Color.rgb(200, 200, 200, 0));
-        context.fillRect(x, y, w, h);
-        context.drawImage(imageObjet, x, y, w, h);
-        context.setStroke(Color.YELLOW);
-        context.setLineWidth(2.0);
-        context.strokeRect(x, y, w, h);
+        double xEcran = camera.calculerEcranX(x);
+        double yEcran = camera.calculerEcranY(y);
+        context.fillRect(xEcran, yEcran, w, h);
+
+        context.drawImage(imageObjet, xEcran, yEcran, w, h);
+
+        if (Main.debugMode) {
+            context.setStroke(Color.YELLOW);
+            context.setLineWidth(2.0);
+            context.strokeRect(xEcran, yEcran, w, h);
+        }
     }
+
 
     public abstract void update(double deltaTemps);
 
@@ -33,90 +40,38 @@ public abstract class ObjetduJeu {
 
     public abstract void testCollision(ObjetduJeu autreObjet);
     protected abstract void gererHorsEcran();
-    protected void gererEnX(){
-        x = Math.min(Main.WIDTH - w, Math.max(0, x));
+    protected void gererEnX() {
+
+        // x = Math.min(Main.WIDTH - w, Math.max(0, x));
+
+        // Calculer la coordonnée maximale d'écran à droite à l'intérieur de la zone visible
+        double coordonneeEcranDroiteMax = Camera.x + Main.WIDTH - w;
+
+        // S'assurer que la coordonnée calculée ne dépasse pas la limite gauche de l'écran
+        double coordonneeGaucheRestreinte = Math.max(Camera.x, x);
+
+        // S'assurer que la coordonnée calculée ne tombe pas en dessous de la limite gauche de l'écran
+
+        // Mettre à jour la coordonnée x de l'objet avec la valeur restreinte
+        x = Math.min(coordonneeEcranDroiteMax, coordonneeGaucheRestreinte);
     }
+
     protected void gererEnY(){
         y = Math.min(Main.HEIGHT - h, Math.max(0, y));
-    }
-
-    public Image getImageObjet() {
-        return imageObjet;
-    }
-
-    public void setImageObjet(Image imageObjet) {
-        this.imageObjet = imageObjet;
     }
 
     public double getX() {
         return x;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
     public double getY() {
         return y;
     }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public double getW() {
-        return w;
-    }
-
-    public void setW(double w) {
-        this.w = w;
-    }
-
-    public double getH() {
-        return h;
-    }
-
-    public void setH(double h) {
-        this.h = h;
-    }
-
-    public double getAx() {
-        return ax;
-    }
-
-    public void setAx(double ax) {
-        this.ax = ax;
-    }
-
-    public double getAy() {
-        return ay;
-    }
-
-    public void setAy(double ay) {
-        this.ay = ay;
-    }
-
     public double getVx() {
         return vx;
     }
 
-    public void setVx(double vx) {
-        this.vx = vx;
-    }
-
-    public double getVy() {
-        return vy;
-    }
-
-    public void setVy(double vy) {
-        this.vy = vy;
-    }
-
     public boolean isEstTouche() {
         return estTouche;
-    }
-
-    public void setEstTouche(boolean estTouche) {
-        this.estTouche = estTouche;
     }
 }

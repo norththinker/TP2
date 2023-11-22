@@ -12,7 +12,7 @@ public class Personnage extends Poisson {
     private int nombreDeVie = nombreDeVieMax;
 
     private boolean clignote = false;
-    private long flashingStartTime;
+    private long tempsClignotageCommence;
 
     public Personnage(double x, double y, double w, double h) {
         imageObjet = new Image("charlotte.png");
@@ -82,13 +82,13 @@ public class Personnage extends Poisson {
             if (nombreDeVie > 0)
                 nombreDeVie--;
 
-            flashingStartTime = System.nanoTime();
+            tempsClignotageCommence = System.nanoTime();
             imageObjet = charlotteOutchImage;
         }
     }
 
     public void continueClignotage() {
-        long tempsEcoule = System.nanoTime() - flashingStartTime;
+        long tempsEcoule = System.nanoTime() - tempsClignotageCommence;
         long dureeClignotage = 2000000000; // 2 secondes
 
         if (tempsEcoule < dureeClignotage) {
@@ -113,15 +113,7 @@ public class Personnage extends Poisson {
         return nombreDeVieMax;
     }
 
-    public void setNombreDeVieMax(int nombreDeVieMax) {
-        this.nombreDeVieMax = nombreDeVieMax;
-    }
-
     public int getNombreDeVie() {
         return nombreDeVie;
-    }
-
-    public void setNombreDeVie(int nombreDeVie) {
-        this.nombreDeVie = nombreDeVie;
     }
 }

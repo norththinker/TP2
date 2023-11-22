@@ -1,9 +1,6 @@
 package org.example;
 
-import javafx.scene.Camera;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 
 public abstract class Projectile extends ObjetduJeu {
     protected static long tempsDernierProjectile = 0;
@@ -15,8 +12,8 @@ public abstract class Projectile extends ObjetduJeu {
 
     @Override
     protected void gererHorsEcran() {
-        if (x > Main.HEIGHT){
-            depasse = false;
+        if (x > Camera.x + Main.WIDTH){
+            depasse = true;
         }
     }
     public static boolean peutLancer() {

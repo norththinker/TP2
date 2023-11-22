@@ -10,7 +10,7 @@ public class Etoile extends Projectile{
         this.w = w;
         this.h = h;
         imageObjet = imageProjectile;
-        vx = 300;
+        vx = 800;
     }
     @Override
     public void update(double deltaTemps) {

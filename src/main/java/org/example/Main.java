@@ -4,48 +4,112 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
+import java.io.File;
+import java.net.CookieHandler;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Timer;
 
 public class Main extends Application {
     public static final double WIDTH = 900, HEIGHT = 520;
-    Random r = new Random();
+    private Camera camera = new Camera(Main.WIDTH * 8);
+    private Random r = new Random();
+    public static boolean debugMode = false;
+
+    public AnimationTimer timer;
 
     public static void main(String[] args) {
         launch(args);
     }
 
     private ArrayList<Projectile> projectiles = new ArrayList<>();
+    private LinkedList<Decor> decors = new LinkedList<>();
+    private MediaPlayer mediaPlayer;
+    private Color couleurArrierePlan = Color.hsb(r.nextInt(190,271), 0.84, 1);
 
     @Override
-    public void start(Stage scene) {
-        var root = new Pane();
-        var sceneAcceuil = new Scene(root, WIDTH, HEIGHT);
-        root.setBackground(Background.fill(Color.BLUE));
+    public void start(Stage stage) {
+
+
+        var rootJeu = new Pane();
+        var rootAccueil = new VBox();
+
+        var sceneAccueil = new Scene(rootAccueil, WIDTH, HEIGHT);
+        sceneAccueil.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+
+        var sceneJeu = new Scene(rootJeu, WIDTH, HEIGHT);
+
+        creerSceneAccueil(rootAccueil, stage, sceneJeu);
+
+        rootJeu.setBackground(Background.fill(couleurArrierePlan));
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         var context = canvas.getGraphicsContext2D();
 
-        root.getChildren().add(canvas);
+        rootJeu.getChildren().add(canvas);
 
 
-        Personnage charlotte = new Personnage(0, Main.HEIGHT/2, 102, 90);
+        Personnage charlotte = new Personnage(0, Main.HEIGHT / 2, 102, 90);
 
         LinkedList<Poisson> poissonsEnnemis = new LinkedList<>();
         var poissonSpawnTimeline = getTimeline(poissonsEnnemis);
         poissonSpawnTimeline.play();
 
-        sceneAcceuil.setOnKeyPressed((e) -> {
+
+        Decor decorActuel = new Decor(0, HEIGHT - Decor.h + 10, new Image("decor1.png"));
+        decors.add(decorActuel);
+        int nombreDecors = 1;
+
+        while (decorActuel.getX() + decorActuel.getW() < Main.WIDTH * 8) {
+            Image imageDecor = new Image("decor" + r.nextInt(1, 7) + ".png");
+            decorActuel = new Decor(0, 0, imageDecor);
+            decorActuel.placerDecorSuivant(decors.get(nombreDecors - 1));
+            decors.add(decorActuel);
+            nombreDecors++;
+        }
+
+        String musicFile = "C:/Users/merab/OneDrive - Collège de Bois-de-Boulogne/Prog 3/TP2/src/main/resources/Midnight-City.mp3";
+
+        try {
+            // Convert the file path to a URL
+            File file = new File(musicFile);
+            String mediaUrl = file.toURI().toURL().toString();
+
+            // Create a Media object with the URL
+            Media sound = new Media(mediaUrl);
+
+            // Create a MediaPlayer with the Media object
+            mediaPlayer = new MediaPlayer(sound);
+
+            // Set the cycle count and play the media
+            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        mediaPlayer.setVolume(0.1);
+        mediaPlayer.play();
+
+        sceneJeu.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
                 if (Projectile.peutLancer()) {
                     projectiles.add(new Etoile(charlotte.getX() + charlotte.w / 2 - 36 / 2,
@@ -55,12 +119,12 @@ public class Main extends Application {
                 Input.setKeyPressed(e.getCode(), true);
             }
         });
-        sceneAcceuil.setOnKeyReleased((e) -> {
+        sceneJeu.setOnKeyReleased((e) -> {
             Input.setKeyPressed(e.getCode(), false);
         });
 
 
-        var timer = new AnimationTimer() {
+        timer = new AnimationTimer() {
             long lastTime = System.nanoTime();
 
             @Override
@@ -69,6 +133,9 @@ public class Main extends Application {
 
                 // 1. Update game entities
                 charlotte.update(deltaTemps);
+
+                camera.suivre(charlotte);
+                camera.update(deltaTemps, charlotte);
 
                 for (Poisson ennemi : poissonsEnnemis) {
                     ennemi.update(deltaTemps);
@@ -104,16 +171,22 @@ public class Main extends Application {
                 context.clearRect(0, 0, WIDTH, HEIGHT);
 
                 // 5. Draw entities on the canvas
+
+                for (Decor decor : decors) {
+                    decor.draw(context, camera);
+                }
+
                 for (Poisson poissonEnnemi : poissonsEnnemis) {
-                    poissonEnnemi.draw(context);
+                    // Utilisez la caméra pour dessiner en prenant en compte sa position
+                    poissonEnnemi.draw(context, camera);
                 }
 
                 for (Projectile projectile : projectiles) {
                     if (projectile != null) {
-                        projectile.draw(context);
+                        projectile.draw(context, camera);
                     }
                 }
-                charlotte.draw(context);
+                charlotte.draw(context, camera);
 
                 // Dessiner le rectangle blanc proportionnel au nombre de vies
                 double largeurBarreVie = 150; // Ajustez la largeur de la barre de vie selon vos besoins
@@ -124,7 +197,7 @@ public class Main extends Application {
                 double pourcentageVie = (double) charlotte.getNombreDeVie() / charlotte.getNombreDeVieMax();
                 double largeurRemplie = pourcentageVie * largeurBarreVie;
 
-                context.setFill(Color.BLUE);
+                context.setFill(couleurArrierePlan);
                 context.fillRect(positionHorizontaleBarre, positionVerticaleBarre, largeurBarreVie, hauteurBarreVie);
                 context.setFill(Color.WHITE);
                 context.fillRect(positionHorizontaleBarre, positionVerticaleBarre, largeurRemplie, hauteurBarreVie);
@@ -133,26 +206,49 @@ public class Main extends Application {
                 context.strokeRect(positionHorizontaleBarre, positionVerticaleBarre, largeurBarreVie, hauteurBarreVie);
 
                 //Ajouter le projectile utilisé à côté de la barre.
-                context.setFill(Color.BLUE);
-                context.drawImage(Projectile.imageProjectile, positionHorizontaleBarre + largeurBarreVie+10,
+                context.setFill(couleurArrierePlan);
+                context.drawImage(Projectile.imageProjectile, positionHorizontaleBarre + largeurBarreVie + 10,
                         positionVerticaleBarre, Projectile.imageProjectile.getWidth(),
                         Projectile.imageProjectile.getHeight());
 
                 //dessiner les cœurs
-                context.setFill(Color.BLUE);
-                var proportionLargeurHauteur = 1872/365;
-                context.drawImage(new Image(charlotte.getNombreDeVie()+"vies.png"), positionHorizontaleBarre,
-                        positionVerticaleBarre + hauteurBarreVie + 20, largeurBarreVie, largeurBarreVie/proportionLargeurHauteur);
+                context.setFill(couleurArrierePlan);
+                var proportionLargeurHauteur = 1872 / 365;
+                context.drawImage(new Image(charlotte.getNombreDeVie() + "vies.png"), positionHorizontaleBarre,
+                        positionVerticaleBarre + hauteurBarreVie + 20, largeurBarreVie, largeurBarreVie / proportionLargeurHauteur);
 
                 lastTime = now;
             }
         };
-        timer.start();
 
 
-        scene.setScene(sceneAcceuil);
-        scene.setResizable(false);
-        scene.show();
+        stage.setScene(sceneAccueil);
+        stage.setResizable(false);
+        stage.show();
+    }
+
+    private void creerSceneAccueil(VBox rootAccueil, Stage stage, Scene sceneJeu) {
+        var logo = new ImageView(new Image("logo.png"));
+
+        rootAccueil.setBackground(Background.fill(Color.hsb(216, 0.84, 1)));
+        logo.setFitHeight(672/1.5);
+        logo.setFitWidth(672/1.5);
+
+        var hboxJouerInfos = new HBox();
+        var boutonJouer = new Button("Jouer!");
+        var boutonInfo = new Button("Infos");
+
+        hboxJouerInfos.getChildren().addAll(boutonJouer, boutonInfo);
+        hboxJouerInfos.setAlignment(Pos.CENTER);
+        hboxJouerInfos.setSpacing(20);
+
+        rootAccueil.setAlignment(Pos.CENTER);
+        rootAccueil.getChildren().addAll(logo, hboxJouerInfos);
+
+        boutonJouer.setOnAction(event -> {
+            stage.setScene(sceneJeu);
+            timer.start();
+        });
     }
 
     private Timeline getTimeline(LinkedList<Poisson> poissonsEnnemis) {
@@ -164,10 +260,11 @@ public class Main extends Application {
                         var yInitiale = r.nextDouble((HEIGHT / 5), (4 * HEIGHT / 5));
                         var vyInitial = r.nextDouble(-100, 100);
                         var imagePoisson = new Image("poisson" + r.nextInt(1, 6) + ".png");
-                        var proportionLargeurHauteur = imagePoisson.getWidth()/imagePoisson.getHeight();
+                        var proportionLargeurHauteur = imagePoisson.getWidth() / imagePoisson.getHeight();
                         var hauteur = r.nextInt(50, 121);
-                        var largeur = hauteur*proportionLargeurHauteur;
-                        poissonsEnnemis.add(new PoissonEnnemi(WIDTH, yInitiale,
+                        var largeur = hauteur * proportionLargeurHauteur;
+
+                        poissonsEnnemis.add(new PoissonEnnemi(camera.getX() + WIDTH, yInitiale,
                                 largeur, hauteur, vyInitial, imagePoisson));
                     }
                 })
