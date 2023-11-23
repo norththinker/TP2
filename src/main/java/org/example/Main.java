@@ -20,6 +20,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.io.File;
@@ -46,6 +47,8 @@ public class Main extends Application {
     private LinkedList<Decor> decors = new LinkedList<>();
     private MediaPlayer mediaPlayer;
     private Color couleurArrierePlan = Color.hsb(r.nextInt(190,271), 0.84, 1);
+    private Timeline poissonSpawnTimeline;
+    private long startTimeNano;
 
     @Override
     public void start(Stage stage) {
@@ -65,14 +68,20 @@ public class Main extends Application {
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
         var context = canvas.getGraphicsContext2D();
 
+        Text timeText = new Text();  // Create a Text node for displaying time
+        timeText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        timeText.setFill(Color.WHITE);
+        timeText.setX(10);  // Adjust the X position as needed
+        timeText.setY(HEIGHT / 2);  // Adjust the Y position as needed
+        rootJeu.getChildren().add(timeText);
+
         rootJeu.getChildren().add(canvas);
 
 
         Personnage charlotte = new Personnage(0, Main.HEIGHT / 2, 102, 90);
 
         LinkedList<Poisson> poissonsEnnemis = new LinkedList<>();
-        var poissonSpawnTimeline = getTimeline(poissonsEnnemis);
-        poissonSpawnTimeline.play();
+        poissonSpawnTimeline = getTimeline(poissonsEnnemis);
 
 
         Decor decorActuel = new Decor(0, HEIGHT - Decor.h + 10, new Image("decor1.png"));
@@ -217,6 +226,10 @@ public class Main extends Application {
                 context.drawImage(new Image(charlotte.getNombreDeVie() + "vies.png"), positionHorizontaleBarre,
                         positionVerticaleBarre + hauteurBarreVie + 20, largeurBarreVie, largeurBarreVie / proportionLargeurHauteur);
 
+                long elapsedNano = now - startTimeNano;
+                long elapsedSeconds = elapsedNano / 1_000_000_000;
+                timeText.setText("Time: " + elapsedSeconds + "s");
+
                 lastTime = now;
             }
         };
@@ -230,7 +243,7 @@ public class Main extends Application {
     private void creerSceneAccueil(VBox rootAccueil, Stage stage, Scene sceneJeu) {
         var logo = new ImageView(new Image("logo.png"));
 
-        rootAccueil.setBackground(Background.fill(Color.hsb(216, 0.84, 1)));
+        rootAccueil.setBackground(Background.fill(Color.rgb(42, 127, 255)));
         logo.setFitHeight(672/1.5);
         logo.setFitWidth(672/1.5);
 
@@ -248,6 +261,8 @@ public class Main extends Application {
         boutonJouer.setOnAction(event -> {
             stage.setScene(sceneJeu);
             timer.start();
+            startTimeNano = System.nanoTime();
+            poissonSpawnTimeline.play();
         });
     }
 
