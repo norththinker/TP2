@@ -55,7 +55,7 @@ public class Main extends Application {
         sceneJeu.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
                 partie.lancerProjectile();
-            } else if (e.getCode() == KeyCode.Q) {
+            } else if (e.getCode() == KeyCode.Q&& Partie.debugMode) {
 
                 partie.setChoisirProjectile(0);
 
@@ -81,6 +81,8 @@ public class Main extends Application {
 
 
             } else if (e.getCode() == KeyCode.R && Partie.debugMode) {
+
+
 
 
                 partie.Changernombredeviedecharlotte();
@@ -151,7 +153,12 @@ public class Main extends Application {
 
         rootAccueil.setAlignment(Pos.CENTER);
         rootAccueil.getChildren().addAll(logo, hboxJouerInfos);
+sceneacceuil.setOnKeyPressed(event -> {if (event.getCode() == KeyCode.ESCAPE)
 
+
+{System.exit(0);}
+
+});
         boutonJouer.setOnAction(event -> {
             if (partie == null)
                 partie = new Partie();
@@ -206,7 +213,7 @@ public class Main extends Application {
             });
 
             scene.setOnKeyPressed(event1 -> {
-                if (event1.getCode() == KeyCode.SPACE) {
+                if (event1.getCode() == KeyCode.ESCAPE) {
                     stage.setScene(sceneacceuil);
                 }
             });

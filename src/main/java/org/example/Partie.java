@@ -369,6 +369,8 @@ public class Partie {
     }
 
     public void Changernombredeviedecharlotte() {
+          partieFini = false;
+
 
         charlotte.setNombreDeVie(4);
 
