@@ -1,8 +1,6 @@
 package org.example;
 
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,11 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class Main extends Application {
     public static final double WIDTH = 900, HEIGHT = 520;
@@ -76,7 +70,7 @@ public class Main extends Application {
 
                 changementPartie(stage);
 
-                if (partie.charlotteArriveFin()) {
+                if (partie.charlotteArriveFin() && !partie.charlotteMorte()) {
                     // Recommencer le jeu
                     partie.commencerNouveauJeu(timer);
                     rootJeu.setBackground(Background.fill(partie.getCouleurArrierePlan()));
@@ -118,7 +112,7 @@ public class Main extends Application {
     }
 
     private void changementPartie(Stage stage) {
-        if (partie.isPartieFini()) {
+        if (partie.isChangerEcranAcceuil()) {
             stage.setScene(sceneAccueil);
             timer.stop();
         }

@@ -40,7 +40,7 @@ public class Partie {
     private Image choisirImage;
     private boolean partieFini = false;
     private long tempsDepuisPartieFini;
-    boolean finDePartieAffiche = false;
+    private boolean changerEcranAcceuil = false;
 
     public Partie() {
         initialiserDecors();
@@ -322,22 +322,24 @@ public class Partie {
             context.setFill(Color.WHITE);
             context.fillText("Niveau" + numeroNiveau, Main.WIDTH / 2, Main.HEIGHT / 2);
         }
+        if (!charlotteMorte())
+            return;
 
         // Afficher "FIN DE PARTIE" si Charlotte est morte
-        if (charlotteMorte() && !finDePartieAffiche) {
+        if (charlotteMorte() && !partieFini) {
             tempsDepuisPartieFini = System.nanoTime();
             context.setFill(Color.RED);
             context.fillText("FIN DE PARTIE", Main.WIDTH / 2, Main.HEIGHT / 2);
-            finDePartieAffiche = true;
+            partieFini = true;
         }
 
         // Afficher "FIN DE PARTIE" pendant 3 secondes après la mort de Charlotte
-        if (charlotteMorte() && finDePartieAffiche && (System.nanoTime() - tempsDepuisPartieFini) / 1_000_000_000 < 3) {
+        if (partieFini && (System.nanoTime() - tempsDepuisPartieFini) / 1_000_000_000 < 3) {
             context.setFill(Color.RED);
             context.fillText("FIN DE PARTIE", Main.WIDTH / 2, Main.HEIGHT / 2);
-            if ((System.nanoTime() - tempsDepuisPartieFini) / 1_000_000_000 > 3)
-                partieFini = true;
         }
+        else
+            changerEcranAcceuil = true;
     }
 
     private void afficherTemppsEcoule(GraphicsContext context) {
@@ -373,6 +375,10 @@ public class Partie {
 
     public void setTempsDepuisPartieFini(long tempsDepuisPartieFini) {
         this.tempsDepuisPartieFini = tempsDepuisPartieFini;
+    }
+
+    public boolean isChangerEcranAcceuil() {
+        return changerEcranAcceuil;
     }
 }
 
