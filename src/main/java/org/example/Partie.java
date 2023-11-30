@@ -22,8 +22,7 @@ import java.util.Random;
 public class Partie {
     private boolean dejatirer;
     private Camera camera = new Camera(Main.WIDTH * 8);
-
-
+    private double tempsPoisson;
 
     private Personnage charlotte = new Personnage(0, Main.HEIGHT / 2, 102, 90);
     private Random r = new Random();
@@ -64,6 +63,7 @@ public class Partie {
         dejatirer = false;
         initialiserDecors();
         initializeMedia();
+
         poissonSpawnTimeline = getTimeline(poissonsEnnemis);
     }
 
@@ -167,12 +167,11 @@ public class Partie {
 
         // 5. Draw entities on the canvas
 
+
+        baril.draw(context, camera);
         for (Decor decor : decors) {
             decor.draw(context, camera);
         }
-
-        baril.draw(context, camera);
-
         for (Poisson poissonEnnemi : poissonsEnnemis) {
             // Utilisez la caméra pour dessiner en prenant en compte sa position
             poissonEnnemi.draw(context, camera);
@@ -212,6 +211,7 @@ public class Partie {
 
 
         numeroNiveau += 1;
+
         initialiserDecors();
         poissonSpawnTimeline.stop();
         poissonSpawnTimeline = getTimeline(poissonsEnnemis);
@@ -270,17 +270,15 @@ public class Partie {
             } else if (choisirProjectile == 1) {
                 dernierTypeProjectile = choisirProjectile;
                 projectiles.add(new BoiteDeSardine(charlotte.getX() + charlotte.w / 2 - 36 / 2,
-                        charlotte.getY() + charlotte.h / 2 - 35 / 2, 36, 35));
+                        charlotte.getY() + charlotte.h / 2 - 35 / 2, 35, 29));
 
 
             } else if (choisirProjectile == 2) {
                 dernierTypeProjectile = choisirProjectile;
-                projectiles.add(new Hippocampe(charlotte.getX() + charlotte.w / 2 - 36 / 2,
-                        charlotte.getY() + charlotte.h / 2 - 35 / 2, 20, 36));
-                projectiles.add(new Hippocampe(charlotte.getX() + charlotte.w / 2 - 36 / 2,
-                        charlotte.getY() + charlotte.h / 2 - 35 / 2, 20, 36));
-                projectiles.add(new Hippocampe(charlotte.getX() + charlotte.w / 2 - 36 / 2,
-                        charlotte.getY() + charlotte.h / 2 - 35 / 2, 20, 36));
+                for (int i = 0; i < 3; i++) {
+                    projectiles.add(new Hippocampe(charlotte.getX() + charlotte.w / 2 - 36 / 2,
+                            charlotte.getY() + charlotte.h / 2 - 35 / 2, 20, 36));
+                }
 
 
             }
@@ -288,8 +286,11 @@ public class Partie {
     }
 
     private Timeline getTimeline(LinkedList<Poisson> poissonsEnnemis) {
+        tempsPoisson = 0.75 + (1 / Math.sqrt(numeroNiveau));
+        System.out.println(tempsPoisson);
         var poissonSpawnTimeline = new Timeline(
-                new KeyFrame(Duration.seconds(1.75), event -> {
+
+                new KeyFrame(Duration.seconds(tempsPoisson), event -> { //// Cette methode pertmet de crée un poissons différent toutes les 1,75 secondes
                     // Code pour créer un nouveau poisson
 
                     for (int i = 0; i < r.nextInt(1, 6); i++) {
@@ -338,7 +339,7 @@ public class Partie {
         context.setFont(Font.font("Jokerman", FontWeight.BOLD, 100));
         context.setTextAlign(TextAlignment.CENTER);
         // Montrer pour 4 secondes
-        if (tempsDepuisDebut < 4) {
+        if (tempsDepuisDebut < 4 && !charlotteMorte()) {
             context.setFill(Color.WHITE);
             context.fillText("Niveau" + numeroNiveau, Main.WIDTH / 2, Main.HEIGHT / 2);
         }
@@ -369,7 +370,7 @@ public class Partie {
     }
 
     public void Changernombredeviedecharlotte() {
-          partieFini = false;
+        partieFini = false;
 
 
         charlotte.setNombreDeVie(4);

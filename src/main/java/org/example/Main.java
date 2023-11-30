@@ -55,17 +55,17 @@ public class Main extends Application {
         sceneJeu.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
                 partie.lancerProjectile();
-            } else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
-
-                partie.setChoisirProjectile(0);
-
-            } else if (e.getCode() == KeyCode.D) {
+            }  else if (e.getCode() == KeyCode.D) {
 
                 if (Partie.debugMode)
                     Partie.debugMode = false;
                 else {
                     Partie.debugMode = true;
-                }
+                }  }
+else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
+
+                    partie.setChoisirProjectile(0);
+
 
 
             } else if (e.getCode() == KeyCode.W && Partie.debugMode) {

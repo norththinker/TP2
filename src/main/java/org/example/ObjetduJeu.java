@@ -25,6 +25,7 @@ public abstract class ObjetduJeu {
             context.setLineWidth(2.0);
             context.strokeRect(xEcran, y, w, h);
         }
+
     }
 
 

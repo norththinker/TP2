@@ -6,8 +6,8 @@ import java.util.LinkedList;
 
 public class  BoiteDeSardine extends Projectile {
 
-    private  double forceEnX = 0 ;
-    private  double forceEnY  = 0 ;
+    private  double forceEnX  ;
+    private  double forceEnY  ;
 
 
 
