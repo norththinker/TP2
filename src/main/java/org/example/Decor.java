@@ -6,18 +6,16 @@ import javafx.scene.paint.Color;
 
 import java.util.Random;
 
-public class Decor {
+public class Decor extends ObjetduJeu{
 
-    private double x, y;
-    public static final double w = 80;
-    public static final double h = 119;
-    private Image imageDecor;
     private Random random = new Random();
 
     public Decor(double x, double y, Image imageDecor) {
         this.x = x;
         this.y = y;
-        this.imageDecor = imageDecor;
+        this.w = 80;
+        this.h = 119;
+        imageObjet = imageDecor;
     }
 
     public void placerDecorSuivant(Decor decorPrecedent) {
@@ -28,14 +26,18 @@ public class Decor {
         // Bas de l'écran - hauteur du décor + décalage supplémentaire
         return Main.HEIGHT - h + 10;
     }
+    @Override
+    public void update(double deltaTemps, Camera camera) {
 
-    public void draw(GraphicsContext context, Camera camera) {
-        context.setFill(Color.rgb(200 , 200 , 200 , 0));
-        double xEcran = camera.calculerEcranX(x);
+    }
 
-        context.fillRect(xEcran, y, w, h);
+    @Override
+    public void testCollision(ObjetduJeu autreObjet) {
 
-        context.drawImage(imageDecor, xEcran, y, w, h);
+    }
+
+    @Override
+    protected void gererHorsEcran(Camera camera) {
 
     }
 

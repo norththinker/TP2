@@ -69,7 +69,7 @@ public class Partie {
 
     private void initialiserDecors() {
 
-        Decor decorActuel = new Decor(0, Main.HEIGHT - Decor.h + 10, new Image("decor1.png"));
+        Decor decorActuel = new Decor(0, Main.HEIGHT - 119 + 10, new Image("decor1.png"));
         decors.add(decorActuel);
         int nombreDecors = 1;
 
@@ -258,7 +258,7 @@ public class Partie {
     }
 
     public void lancerProjectile() {
-        if (Projectile.peutLancer()) {
+        if (charlotte.peutLancer()) {
 
             if (choisirProjectile == 0) {
                 dernierTypeProjectile = choisirProjectile;

@@ -18,7 +18,8 @@ public class Personnage extends Poisson {
 
     private boolean clignote = false;
     private long tempsClignotageCommence;
-
+    protected static long tempsDernierProjectile = 0;
+    protected static final long delaiEntreProjectiles = 500_000_000;
     public Personnage(double x, double y, double w, double h) {
         imageObjet = new Image("charlotte.png");
         this.x = x;
@@ -111,6 +112,14 @@ public class Personnage extends Poisson {
             imageObjet = charlotteNormalImage;
             clignote = false;
         }
+    }
+    public boolean peutLancer() {
+        long tempActuel = System.nanoTime();
+        if (tempActuel - tempsDernierProjectile > delaiEntreProjectiles) {
+            tempsDernierProjectile = tempActuel;
+            return true;
+        }
+        return false;
     }
     public boolean estMorte(){
         return nombreDeVie == 0;
