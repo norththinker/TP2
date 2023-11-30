@@ -2,9 +2,8 @@ package org.example;
 
 
 public class Camera {
-    public static double x, y;
+    private double x;
     private final double limiteDroite;  // Nouvelle variable pour la limite à droite
-    private boolean doitSuivre = false;  // Nouvelle variable pour indiquer si la caméra doit suivre
     double vitesseDefilementX;
 
     public Camera(double limiteDroite) {
@@ -15,15 +14,13 @@ public class Camera {
         return xMonde - x;
     }
 
-    public double calculerEcranY(double yMonde) {
-        return yMonde - y;
-    }
 
     /**
      * Fait avancer la caméra vers la droite automatiquement
      */
     public void update(double deltaTemps, Personnage charlotte) {
-
+        boolean doitSuivre = (charlotte.getX() > (x + 0.2 * Main.WIDTH)) && charlotte.getVx() > 0 && x != limiteDroite - Main.WIDTH;
+        
         if (doitSuivre) {
             vitesseDefilementX = charlotte.getVx();
             // La caméra bouge vers la droite automatiquement
@@ -44,7 +41,6 @@ public class Camera {
         }
 
         // Activer le suivi lorsque Charlotte atteint 1/5 de la caméra
-        doitSuivre = ((charlotte.getX() > (limiteGauche + 0.2 * Main.WIDTH)) && charlotte.getVx() > 0 && x != limiteDroite - Main.WIDTH);
     }
 
     public double getX() {
@@ -52,5 +48,9 @@ public class Camera {
     }
     private boolean cameraArrete(){
         return x > limiteDroite - Main.WIDTH;
+    }
+
+    public void setX(double x) {
+        this.x = x;
     }
 }

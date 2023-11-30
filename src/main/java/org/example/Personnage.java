@@ -13,6 +13,7 @@ public class Personnage extends Poisson {
 
     private boolean clignote = false;
     private long tempsClignotageCommence;
+    private boolean nouvellePartie = false;
 
     public Personnage(double x, double y, double w, double h) {
         imageObjet = new Image("charlotte.png");
@@ -23,11 +24,10 @@ public class Personnage extends Poisson {
     }
 
     @Override
-    public void update(double deltaTemps) {
+    public void update(double deltaTemps, Camera camera) {
         if (clignote) {
             continueClignotage();
         }
-
         double vitesseMax = 300;
         vx = limiter(vx + deltaTemps * ax, -vitesseMax, vitesseMax);
         vy = limiter(vy + deltaTemps * ay, -vitesseMax, vitesseMax);
@@ -35,7 +35,7 @@ public class Personnage extends Poisson {
         y += deltaTemps * vy;
 
         gererCommandes();
-        gererHorsEcran();
+        gererHorsEcran(camera);
     }
 
     private void gererCommandes() {
@@ -62,8 +62,8 @@ public class Personnage extends Poisson {
     }
 
     @Override
-    protected void gererHorsEcran() {
-        gererEnX();
+    protected void gererHorsEcran(Camera camera) {
+        gererEnX(camera);
         gererEnY();
     }
 
@@ -108,7 +108,9 @@ public class Personnage extends Poisson {
             clignote = false;
         }
     }
-
+    public boolean estMorte(){
+        return nombreDeVie == 0;
+    }
     public int getNombreDeVieMax() {
         return nombreDeVieMax;
     }
@@ -116,4 +118,5 @@ public class Personnage extends Poisson {
     public int getNombreDeVie() {
         return nombreDeVie;
     }
+
 }

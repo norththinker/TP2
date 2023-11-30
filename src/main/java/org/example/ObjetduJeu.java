@@ -13,22 +13,22 @@ public abstract class ObjetduJeu {
     protected boolean estTouche = false;
 
     public void draw(GraphicsContext context, Camera camera) {
-        context.setFill(Color.rgb(200, 200, 200, 0));
+        context.setFill(Color.rgb(200 , 200 , 200 , 0));
         double xEcran = camera.calculerEcranX(x);
-        double yEcran = camera.calculerEcranY(y);
-        context.fillRect(xEcran, yEcran, w, h);
 
-        context.drawImage(imageObjet, xEcran, yEcran, w, h);
+        context.fillRect(xEcran, y, w, h);
 
-        if (Main.debugMode) {
+        context.drawImage(imageObjet, xEcran, y, w, h);
+
+        if (Partie.debugMode) {
             context.setStroke(Color.YELLOW);
             context.setLineWidth(2.0);
-            context.strokeRect(xEcran, yEcran, w, h);
+            context.strokeRect(xEcran, y, w, h);
         }
     }
 
 
-    public abstract void update(double deltaTemps);
+    public abstract void update(double deltaTemps, Camera camera);
 
     public boolean enCollisionAvec(ObjetduJeu autreObjet) {
 
@@ -39,16 +39,16 @@ public abstract class ObjetduJeu {
     }
 
     public abstract void testCollision(ObjetduJeu autreObjet);
-    protected abstract void gererHorsEcran();
-    protected void gererEnX() {
+    protected abstract void gererHorsEcran(Camera camera);
+    protected void gererEnX(Camera camera) {
 
         // x = Math.min(Main.WIDTH - w, Math.max(0, x));
 
         // Calculer la coordonnée maximale d'écran à droite à l'intérieur de la zone visible
-        double coordonneeEcranDroiteMax = Camera.x + Main.WIDTH - w;
+        double coordonneeEcranDroiteMax = camera.getX() + Main.WIDTH - w;
 
         // S'assurer que la coordonnée calculée ne dépasse pas la limite gauche de l'écran
-        double coordonneeGaucheRestreinte = Math.max(Camera.x, x);
+        double coordonneeGaucheRestreinte = Math.max(camera.getX() , x);
 
         // S'assurer que la coordonnée calculée ne tombe pas en dessous de la limite gauche de l'écran
 
@@ -62,6 +62,10 @@ public abstract class ObjetduJeu {
 
     public double getX() {
         return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
     }
 
     public double getY() {

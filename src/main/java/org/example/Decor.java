@@ -30,12 +30,12 @@ public class Decor {
     }
 
     public void draw(GraphicsContext context, Camera camera) {
-        context.setFill(Color.rgb(200, 200, 200, 0));
+        context.setFill(Color.rgb(200 , 200 , 200 , 0));
         double xEcran = camera.calculerEcranX(x);
-        double yEcran = camera.calculerEcranY(y);
-        context.fillRect(xEcran, yEcran, w, h);
 
-        context.drawImage(imageDecor, xEcran, yEcran, w, h);
+        context.fillRect(xEcran, y, w, h);
+
+        context.drawImage(imageDecor, xEcran, y, w, h);
 
     }
 

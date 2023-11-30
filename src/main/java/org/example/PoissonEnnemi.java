@@ -11,23 +11,23 @@ public class PoissonEnnemi extends Poisson {
         this.h = h;
         this.vy = vy;
         this.ax = -500;
-        vx = -(100 * Math.pow(1, 0.33) + 200);
+        vx = -(100 * Math.pow(Partie.numeroNiveau, 0.33) + 200);
         imageObjet = imagePoisson;
     }
 
 
     @Override
-    public void update(double deltaTemps) {
+    public void update(double deltaTemps, Camera camera) {
         x += deltaTemps * vx;
         y += deltaTemps * vy;
 
-        vx = vx + deltaTemps * ax;
+        vx += deltaTemps * ax;
 
-        gererHorsEcran();
+        gererHorsEcran(camera);
     }
 
     @Override
-    protected void gererHorsEcran() {
+    protected void gererHorsEcran(Camera camera) {
         gererEnY();
     }
 
