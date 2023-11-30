@@ -81,7 +81,7 @@ public class Main extends Application {
             }
         };
 
-        partie = new Partie();
+
         stage.setScene(sceneAccueil);
         stage.setResizable(false);
         stage.show();
@@ -113,8 +113,11 @@ public class Main extends Application {
 
     private void changementPartie(Stage stage) {
         if (partie.isChangerEcranAcceuil()) {
+            partie.setPartieFini(false);
+            partie.setChangerEcranAcceuil(false);
             stage.setScene(sceneAccueil);
             timer.stop();
+            partie = new Partie();
         }
     }
 }

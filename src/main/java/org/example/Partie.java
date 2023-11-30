@@ -380,5 +380,9 @@ public class Partie {
     public boolean isChangerEcranAcceuil() {
         return changerEcranAcceuil;
     }
+
+    public void setChangerEcranAcceuil(boolean changerEcranAcceuil) {
+        this.changerEcranAcceuil = changerEcranAcceuil;
+    }
 }
 
