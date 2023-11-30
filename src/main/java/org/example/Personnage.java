@@ -8,6 +8,11 @@ public class Personnage extends Poisson {
     private final Image charlotteNormalImage = new Image("charlotte.png");
     private final Image charlotteAvantImage = new Image("charlotte-avant.png");
     private final Image charlotteOutchImage = new Image("charlotte-outch.png");
+
+    public void setNombreDeVie(int nombreDeVie) {
+        this.nombreDeVie = nombreDeVie;
+    }
+
     private int nombreDeVieMax = 4;
     private int nombreDeVie = nombreDeVieMax;
 

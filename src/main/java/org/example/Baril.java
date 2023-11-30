@@ -12,6 +12,12 @@ public class Baril extends ObjetduJeu {
     private boolean isTouche ;
     private double periode = 3;
 
+    public void setDejaTouche(boolean dejaTouche) {
+        this.dejaTouche = dejaTouche;
+    }
+
+    private boolean dejaTouche;
+
 
 
     private int choix ;
@@ -37,6 +43,10 @@ public class Baril extends ObjetduJeu {
 
     }
 
+    public boolean isDejaTouche() {
+        return dejaTouche;
+    }
+
     @Override
     public void testCollision(ObjetduJeu autreObjet) {
         if (this.enCollisionAvec(autreObjet)) {
@@ -50,6 +60,7 @@ public class Baril extends ObjetduJeu {
 
                 imageObjet = new Image("baril-ouvert.png");
                 setTouche(true);
+                dejaTouche = false;
             }
         }
     }

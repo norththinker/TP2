@@ -22,9 +22,17 @@ import java.util.Random;
 public class Partie {
     private boolean dejatirer = false;
     private Camera camera = new Camera(Main.WIDTH * 8);
+
+
+
     private Personnage charlotte = new Personnage(0, Main.HEIGHT / 2, 102, 90);
     private Random r = new Random();
-    public static boolean debugMode = true;
+    public static boolean debugMode = false;
+
+    public void setChoisirProjectile(int choisirProjectile) {
+        this.choisirProjectile = choisirProjectile;
+    }
+
     private ArrayList<Projectile> projectiles = new ArrayList<>();
     private LinkedList<Decor> decors = new LinkedList<>();
     private MediaPlayer mediaPlayer;
@@ -46,6 +54,9 @@ public class Partie {
         initialiserDecors();
         initializeMedia();
         poissonSpawnTimeline = getTimeline(poissonsEnnemis);
+        numeroNiveau = 1;
+        dejatirer = false;
+        baril.setTouche(false);
     }
 
     private void initialiserDecors() {
@@ -97,7 +108,7 @@ public class Partie {
             projectile.update(deltaTemps, camera);
         }
         updateTempsEcouleDepuisDebut();
-        // 2. Check for collisions
+
         for (Poisson ennemi : poissonsEnnemis) {
             if (!charlotte.isEstTouche()) {
                 charlotte.testCollision(ennemi);
@@ -112,15 +123,17 @@ public class Partie {
         baril.testCollision(charlotte);
         Changerimage();
 
-        if (baril.isTouche() && !dejatirer) {
+        if (baril.isTouche() && !baril.isDejaTouche()) {
 
-            if (dernierTypeProjectile == baril.getChoix()) {
+            if (choisirProjectile == baril.getChoix()) {
                 while (dernierTypeProjectile == baril.getChoix())
                     baril.setChoix(r.nextInt(0, 3));
             }
 
+
             choisirProjectile = baril.getChoix();
-            dejatirer = true;
+            baril.setDejaTouche(true);
+
 
         }
 
@@ -134,7 +147,6 @@ public class Partie {
             charlotte.testCollision(poissonEnnemi);
         }
 
-        // 3. Remove entities marked as "touched"
         poissonsEnnemis.removeIf(Poisson::isEstTouche);
 
     }
@@ -143,8 +155,6 @@ public class Partie {
 
         context.clearRect(0, 0, Main.WIDTH, Main.HEIGHT);
 
-
-        // 5. Draw entities on the canvas
 
         for (Decor decor : decors) {
             decor.draw(context, camera);
@@ -187,6 +197,7 @@ public class Partie {
         decors.clear();
         poissonsEnnemis.clear();
         baril = new Baril();
+
 
         numeroNiveau += 1;
         initialiserDecors();
@@ -242,15 +253,14 @@ public class Partie {
 
                 projectiles.add(new Etoile(charlotte.getX() + charlotte.w / 2 - 36 / 2,
                         charlotte.getY() + charlotte.h / 2 - 35 / 2, 36, 35));
-                choisirImage = new Image("etoile.png");
-                Projectile.imageProjectile = choisirImage;
+
+
             } else if (choisirProjectile == 1) {
                 dernierTypeProjectile = choisirProjectile;
                 projectiles.add(new BoiteDeSardine(charlotte.getX() + charlotte.w / 2 - 36 / 2,
                         charlotte.getY() + charlotte.h / 2 - 35 / 2, 36, 35));
 
-                choisirImage = new Image("sardines.png");
-                Projectile.imageProjectile = choisirImage;
+
             } else if (choisirProjectile == 2) {
                 dernierTypeProjectile = choisirProjectile;
                 projectiles.add(new Hippocampe(charlotte.getX() + charlotte.w / 2 - 36 / 2,
@@ -261,8 +271,6 @@ public class Partie {
                         charlotte.getY() + charlotte.h / 2 - 35 / 2, 20, 36));
 
 
-                choisirImage = new Image("hippocampe.png");
-                Projectile.imageProjectile = choisirImage;
             }
         }
     }
@@ -337,8 +345,7 @@ public class Partie {
         if (partieFini && (System.nanoTime() - tempsDepuisPartieFini) / 1_000_000_000 < 3) {
             context.setFill(Color.RED);
             context.fillText("FIN DE PARTIE", Main.WIDTH / 2, Main.HEIGHT / 2);
-        }
-        else
+        } else
             changerEcranAcceuil = true;
     }
 
@@ -346,6 +353,13 @@ public class Partie {
         context.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         context.setFill(Color.WHITE);
         context.fillText("Temps: " + tempsDepuisDebut + "s", 50, Main.HEIGHT / 2);
+
+    }
+
+    public void Changernombredeviedecharlotte() {
+
+        charlotte.setNombreDeVie(4);
+
 
     }
 

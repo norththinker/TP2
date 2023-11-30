@@ -48,7 +48,45 @@ public class Main extends Application {
         sceneJeu.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
                 partie.lancerProjectile();
+            } else if (e.getCode() == KeyCode.Q) {
+
+                partie.setChoisirProjectile(0);
+
+            } else if (e.getCode() == KeyCode.D) {
+
+                if (Partie.debugMode)
+                    Partie.debugMode = false;
+                else {
+                    Partie.debugMode = true;
+                }
+
+
+            } else if (e.getCode() == KeyCode.W && Partie.debugMode) {
+
+
+                partie.setChoisirProjectile(2);
+
+
+            } else if (e.getCode() == KeyCode.E && Partie.debugMode) {
+
+
+                partie.setChoisirProjectile(1);
+
+
+            } else if (e.getCode() == KeyCode.R && Partie.debugMode) {
+
+
+                partie.Changernombredeviedecharlotte();
+
+
+            } else if (e.getCode() == KeyCode.T && Partie.debugMode) {
+
+                timer.start();
+                partie.commencerNouveauJeu(timer);
+
+
             } else {
+
                 Input.setKeyPressed(e.getCode(), true);
             }
         });
@@ -74,6 +112,7 @@ public class Main extends Application {
                     // Recommencer le jeu
                     partie.commencerNouveauJeu(timer);
                     rootJeu.setBackground(Background.fill(partie.getCouleurArrierePlan()));
+
                 }
                 changementPartie(stage);
 
