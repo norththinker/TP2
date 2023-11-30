@@ -65,14 +65,6 @@ public class Baril extends ObjetduJeu {
         }
     }
 
-
-    public void ChangerProjectile () {
-
-
-
-
-
-    }
     @Override
     protected void gererHorsEcran(Camera camera) {
 

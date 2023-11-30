@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public class Partie {
-    private boolean dejatirer = false;
+    private boolean dejatirer;
     private Camera camera = new Camera(Main.WIDTH * 8);
 
 
@@ -28,35 +28,43 @@ public class Partie {
     private Personnage charlotte = new Personnage(0, Main.HEIGHT / 2, 102, 90);
     private Random r = new Random();
     public static boolean debugMode = false;
+    private ArrayList<Projectile> projectiles;
+
 
     public void setChoisirProjectile(int choisirProjectile) {
         this.choisirProjectile = choisirProjectile;
     }
 
-    private ArrayList<Projectile> projectiles = new ArrayList<>();
     private LinkedList<Decor> decors = new LinkedList<>();
     private MediaPlayer mediaPlayer;
-    private Color couleurArrierePlan = Color.hsb(r.nextInt(190, 271), 0.84, 1);
-    private LinkedList<Poisson> poissonsEnnemis = new LinkedList<>();
+    private Color couleurArrierePlan;
+    private LinkedList<Poisson> poissonsEnnemis;
     private Timeline poissonSpawnTimeline;
     private long tempsDepuisDebut;
     private long startTimeNano;
-    public static int numeroNiveau = 1;
-    private Baril baril = new Baril();
-    private int choisirProjectile = 0;
-    private int dernierTypeProjectile = 0;
+    public static int numeroNiveau;
+    private Baril baril;
+    private int choisirProjectile;
+    private int dernierTypeProjectile;
     private Image choisirImage;
-    private boolean partieFini = false;
+    private boolean partieFini;
     private long tempsDepuisPartieFini;
-    private boolean changerEcranAcceuil = false;
+    private boolean changerEcranAcceuil;
 
     public Partie() {
+        numeroNiveau = 1;
+        couleurArrierePlan = Color.hsb(r.nextInt(190, 271), 0.84, 1);
+        poissonsEnnemis = new LinkedList<>();
+        choisirProjectile = 0;
+        dernierTypeProjectile = 0;
+        changerEcranAcceuil = false;
+        partieFini = false;
+        baril = new Baril();
+        projectiles = new ArrayList<>();
+        dejatirer = false;
         initialiserDecors();
         initializeMedia();
         poissonSpawnTimeline = getTimeline(poissonsEnnemis);
-        numeroNiveau = 1;
-        dejatirer = false;
-        baril.setTouche(false);
     }
 
     private void initialiserDecors() {
@@ -108,7 +116,7 @@ public class Partie {
             projectile.update(deltaTemps, camera);
         }
         updateTempsEcouleDepuisDebut();
-
+        // 2. Check for collisions
         for (Poisson ennemi : poissonsEnnemis) {
             if (!charlotte.isEstTouche()) {
                 charlotte.testCollision(ennemi);
@@ -147,6 +155,7 @@ public class Partie {
             charlotte.testCollision(poissonEnnemi);
         }
 
+        // 3. Remove entities marked as "touched"
         poissonsEnnemis.removeIf(Poisson::isEstTouche);
 
     }
@@ -155,6 +164,8 @@ public class Partie {
 
         context.clearRect(0, 0, Main.WIDTH, Main.HEIGHT);
 
+
+        // 5. Draw entities on the canvas
 
         for (Decor decor : decors) {
             decor.draw(context, camera);
@@ -197,6 +208,7 @@ public class Partie {
         decors.clear();
         poissonsEnnemis.clear();
         baril = new Baril();
+        changerEcranAcceuil = false;
 
 
         numeroNiveau += 1;

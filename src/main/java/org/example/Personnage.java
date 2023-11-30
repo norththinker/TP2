@@ -18,7 +18,6 @@ public class Personnage extends Poisson {
 
     private boolean clignote = false;
     private long tempsClignotageCommence;
-    private boolean nouvellePartie = false;
 
     public Personnage(double x, double y, double w, double h) {
         imageObjet = new Image("charlotte.png");
