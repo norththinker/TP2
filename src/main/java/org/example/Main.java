@@ -137,83 +137,97 @@ public class Main extends Application {
     }
 
     private void creerSceneAccueil(VBox rootAccueil, Stage stage, Scene sceneJeu, Scene sceneacceuil) {
-        var logo = new ImageView(new Image("logo.png"));
+        // Création de l'image du logo et configuration de ses dimensions
+        var logoImageView = new ImageView(new Image("logo.png"));
+        rootAccueil.setBackground(Background.fill(Color.rgb(42, 127, 255))); // Définition de la couleur de fond
 
-        rootAccueil.setBackground(Background.fill(Color.rgb(42, 127, 255)));
-        logo.setFitHeight(672 / 1.5);
-        logo.setFitWidth(672 / 1.5);
+// Configuration des dimensions du logo
+        logoImageView.setFitHeight(672 / 1.5);
+        logoImageView.setFitWidth(672 / 1.5);
 
-        var hboxJouerInfos = new HBox();
+// Création des boutons "Jouer!" et "Infos"
         var boutonJouer = new Button("Jouer!");
         var boutonInfo = new Button("Infos");
 
-        hboxJouerInfos.getChildren().addAll(boutonJouer, boutonInfo);
-        hboxJouerInfos.setAlignment(Pos.CENTER);
-        hboxJouerInfos.setSpacing(20);
+// Création du conteneur HBox pour les boutons
+        var hboxBoutons = new HBox();
+        hboxBoutons.getChildren().addAll(boutonJouer, boutonInfo);
+        hboxBoutons.setAlignment(Pos.CENTER);
+        hboxBoutons.setSpacing(20);
 
+// Configuration du conteneur principal (root) pour la scène d'accueil
         rootAccueil.setAlignment(Pos.CENTER);
-        rootAccueil.getChildren().addAll(logo, hboxJouerInfos);
+        rootAccueil.getChildren().addAll(logoImageView, hboxBoutons);
+
+// Configuration de l'événement de touche pour quitter l'application lorsque la touche Escape est enfoncée
         sceneacceuil.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE) {
                 Platform.exit();
             }
-
         });
+
+// Gestionnaire d'événement pour le bouton "Jouer!"
         boutonJouer.setOnAction(event -> {
             if (partie == null)
                 partie = new Partie();
 
+            // Démarrage du jeu
             stage.setScene(sceneJeu);
             partie.startGame(timer);
-
-            stage.setScene(sceneJeu);
             timer.start();
         });
 
-        var vbox = new VBox();
-        var sceneInfo = new Scene(vbox, WIDTH, HEIGHT);
+// Configuration de la scène d'informations avec un style CSS externe
+        var vboxInfo = new VBox();
+        var sceneInfo = new Scene(vboxInfo, WIDTH, HEIGHT);
         sceneInfo.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
-        Text text = new Text("Charlotte la Barbotte");
-        Text text1 = new Text("Par Ismail Bissoular");
-        Text text2 = new Text("Et Saib Merabet");
-        Text text3 = new Text("Travail remis à Nicolas Hurtubise et Georges Côté pour le cours de 420-203-RE" + "\n" +
+
+// Ajout des éléments textuels à la scène d'informations
+        Text titreText = new Text("Charlotte la Barbotte");
+        Text auteursText = new Text("Par Ismail Bissoular et Saib Merabet");
+        Text coursText = new Text("Travail remis à Nicolas Hurtubise et Georges Côté pour le cours de 420-203-RE\n" +
                 " -  Développement de programmes dans un environnement graphique. ");
 
-        Random r = new Random();
-        choixPoissonInfo = r.nextInt(1, 6);
-
-        imageInfo = new Image("poisson" + choixPoissonInfo + ".png");
+// Génération aléatoire d'un indice de poisson pour les informations
+        Random random = new Random();
+        choixPoissonInfo = random.nextInt(1, 6);
+         imageInfo = new Image("poisson" + choixPoissonInfo + ".png");
         Button boutonAnnuler = new Button("Annuler");
-        imageViewInfo = new ImageView(imageInfo);
+        ImageView imageViewInfo = new ImageView(imageInfo);
 
-        vbox.getChildren().add(text);
-        vbox.getChildren().add(imageViewInfo);
-        vbox.getChildren().add(text1);
-        vbox.getChildren().add(text2);
-        vbox.getChildren().add(text3);
+// Ajout des éléments à la VBox
+        vboxInfo.getChildren().addAll(titreText, imageViewInfo, auteursText, coursText);
 
-        text1.setFont(Font.font(30));
-        text2.setFont(Font.font(30));
+// Configuration des polices pour les textes
+        auteursText.setFont(Font.font(30));
 
+// Configuration du bouton "Annuler"
         boutonAnnuler.setAlignment(Pos.BOTTOM_CENTER);
-        vbox.getChildren().add(boutonAnnuler);
+        vboxInfo.getChildren().add(boutonAnnuler);
 
+// Gestionnaire d'événement pour le bouton "Infos"
         boutonInfo.setOnAction(event -> {
+            // Passage à la scène d'informations
             stage.setScene(sceneInfo);
 
-            choixPoissonInfo = r.nextInt(1, 6);
-            text.setFont(Font.font(80));
-            vbox.setBackground(Background.fill(Color.rgb(42, 127, 255)));
-            vbox.setAlignment(Pos.TOP_CENTER);
+            // Génération aléatoire d'un nouvel indice de poisson
+            choixPoissonInfo = random.nextInt(1, 6);
+            titreText.setFont(Font.font(80));
+            vboxInfo.setBackground(Background.fill(Color.rgb(42, 127, 255)));
+            vboxInfo.setAlignment(Pos.TOP_CENTER);
 
+            // Gestionnaire d'événement pour le bouton "Annuler" dans la scène d'informations
             boutonAnnuler.setOnAction(event1 -> {
+                // Réinitialisation de l'image du poisson et retour à la scène d'accueil
                 imageInfo = new Image("poisson" + choixPoissonInfo + ".png");
                 imageViewInfo.setImage(imageInfo);
                 stage.setScene(sceneacceuil);
             });
 
+            // Gestionnaire d'événement pour la touche Escape dans la scène d'informations
             sceneInfo.setOnKeyPressed(event1 -> {
                 if (event1.getCode() == KeyCode.ESCAPE) {
+                    // Retour à la scène d'accueil
                     stage.setScene(sceneacceuil);
                 }
             });

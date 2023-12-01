@@ -255,20 +255,23 @@ public class Partie {
     }
 
     public void lancerProjectile() {
+        // Vérifie si le personnage peut lancer un projectile
         if (charlotte.peutLancer()) {
+            // Calcule la position initiale du projectile par rapport à Charlotte
             double positionX = charlotte.getX() + charlotte.w / 2 - 36 / 2;
             double positionY = charlotte.getY() + charlotte.h / 2 - 35 / 2;
 
+            // Crée et ajoute le projectile en fonction du type actuel
             switch (projectileActuel) {
                 case ETOILE:
-                    projectiles.add(new Etoile(positionX, positionY, 36, 35));
+                    projectiles.add(new Etoile(positionX, positionY, 36, 35)); // Crée une étoile
                     break;
                 case SARDINES:
-                    projectiles.add(new BoiteDeSardine(positionX, positionY, 35, 29));
+                    projectiles.add(new BoiteDeSardine(positionX, positionY, 35, 29)); // Crée une boîte de sardines
                     break;
                 case HIPPOCAMPE:
                     for (int i = 0; i < 3; i++) {
-                        projectiles.add(new Hippocampe(positionX, positionY, 20, 36));
+                        projectiles.add(new Hippocampe(positionX, positionY, 20, 36)); // Crée trois hippocampes
                     }
                     break;
             }

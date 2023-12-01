@@ -29,7 +29,7 @@ public class Hippocampe extends Projectile {
     @Override
     public void update(double deltaTemps, Camera camera) {
         tempEcoule += deltaTemps;
-        x += deltaTemps * vx;
+        x += deltaTemps * vx; //////// on calcule le temps total
 
         y = yInitial + amplitude * Math.sin(2 * Math.PI * tempEcoule / period);
         gererHorsEcran(camera);
@@ -37,7 +37,7 @@ public class Hippocampe extends Projectile {
 
     @Override
     public void testCollision(ObjetduJeu autreObjet) {
-        // Implémentez la logique de collision si nécessaire
+
     }
 
 

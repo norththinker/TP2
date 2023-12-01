@@ -50,7 +50,7 @@ public class Baril extends ObjetduJeu {
     @Override
     public void testCollision(ObjetduJeu autreObjet) {
         if (this.enCollisionAvec(autreObjet)) {
-            if (!isTouche) {
+            if (!isTouche) { /// si le baril n'est pas encore touché on genere un nombre aleatoire entre 0 et 2
 
 
                 Random r = new Random();
@@ -60,7 +60,7 @@ public class Baril extends ObjetduJeu {
 
                 imageObjet = new Image("baril-ouvert.png");
                 setTouche(true);
-                dejaTouche = false;
+
             }
         }
     }
