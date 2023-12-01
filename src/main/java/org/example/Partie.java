@@ -21,7 +21,7 @@ import java.util.Random;
 
 public class Partie {
     private Image imageProjectile;
-    private TypeProjectile choisirTypeProjectile;
+    private TypeProjectile projectileActuel;
     private Camera camera = new Camera(Main.WIDTH * 8);
     private double tempsPoisson;
 
@@ -31,9 +31,6 @@ public class Partie {
     private ArrayList<Projectile> projectiles;
 
 
-    public void setChoisirProjectile(int choisirProjectile) {
-        this.choisirProjectile = choisirProjectile;
-    }
 
     private LinkedList<Decor> decors = new LinkedList<>();
     private MediaPlayer mediaPlayer;
@@ -44,8 +41,6 @@ public class Partie {
     private long startTimeNano;
     public static int numeroNiveau;
     private Baril baril;
-    private int choisirProjectile;
-    private int dernierTypeProjectile;
     private boolean partieFini;
     private long tempsDepuisPartieFini;
     private boolean changerEcranAcceuil;
@@ -55,13 +50,11 @@ public class Partie {
         numeroNiveau = 1;
         couleurArrierePlan = Color.hsb(r.nextInt(190, 271), 0.84, 1);
         poissonsEnnemis = new LinkedList<>();
-        choisirProjectile = 0;
-        dernierTypeProjectile = 0;
+        projectileActuel = TypeProjectile.ETOILE;
         changerEcranAcceuil = false;
         partieFini = false;
         baril = new Baril();
         projectiles = new ArrayList<>();
-        boolean dejatirer = false;
         initialiserDecors();
         initialiserMedia();
 
@@ -134,19 +127,19 @@ public class Partie {
 
         if (baril.isTouche() && !baril.isDejaTouche()) {
 
-            if (choisirProjectile == baril.getChoix()) {
-                while (dernierTypeProjectile == baril.getChoix())
-                    baril.setChoix(r.nextInt(0, 3));
-            }
+            TypeProjectile projectileChoisi = TypeProjectile.values()[baril.getChoix()];
+
+            while (projectileActuel == projectileChoisi)
+                baril.setChoix(r.nextInt(0, 3));
 
 
-            choisirProjectile = baril.getChoix();
+            projectileActuel = projectileChoisi;
             baril.setDejaTouche(true);
 
 
         }
 
-        if (choisirProjectile == 1) {
+        if (projectileActuel == TypeProjectile.SARDINES) {
             for (Projectile projectile : projectiles) {
                 projectile.calculerForcesElectriques(poissonsEnnemis, charlotte);
             }
@@ -258,33 +251,29 @@ public class Partie {
         return couleurArrierePlan;
     }
 
+
+
     public void lancerProjectile() {
         if (charlotte.peutLancer()) {
+            double positionX = charlotte.getX() + charlotte.w / 2 - 36 / 2;
+            double positionY = charlotte.getY() + charlotte.h / 2 - 35 / 2;
 
-            if (choisirProjectile == 0) {
-                dernierTypeProjectile = choisirProjectile;
-
-                projectiles.add(new Etoile(charlotte.getX() + charlotte.w / 2 - 36 / 2,
-                        charlotte.getY() + charlotte.h / 2 - 35 / 2, 36, 35));
-
-
-            } else if (choisirProjectile == 1) {
-                dernierTypeProjectile = choisirProjectile;
-                projectiles.add(new BoiteDeSardine(charlotte.getX() + charlotte.w / 2 - 36 / 2,
-                        charlotte.getY() + charlotte.h / 2 - 35 / 2, 35, 29));
-
-
-            } else if (choisirProjectile == 2) {
-                dernierTypeProjectile = choisirProjectile;
-                for (int i = 0; i < 3; i++) {
-                    projectiles.add(new Hippocampe(charlotte.getX() + charlotte.w / 2 - 36 / 2,
-                            charlotte.getY() + charlotte.h / 2 - 35 / 2, 20, 36));
-                }
-
-
+            switch (projectileActuel) {
+                case ETOILE:
+                    projectiles.add(new Etoile(positionX, positionY, 36, 35));
+                    break;
+                case SARDINES:
+                    projectiles.add(new BoiteDeSardine(positionX, positionY, 35, 29));
+                    break;
+                case HIPPOCAMPE:
+                    for (int i = 0; i < 3; i++) {
+                        projectiles.add(new Hippocampe(positionX, positionY, 20, 36));
+                    }
+                    break;
             }
         }
     }
+
 
     private Timeline getTimeline(LinkedList<Poisson> poissonsEnnemis) {
         tempsPoisson = 0.75 + (1 / Math.sqrt(numeroNiveau));
@@ -317,11 +306,8 @@ public class Partie {
 
 
     private void Changerimage() {
-
-        choisirTypeProjectile = TypeProjectile.values()[choisirProjectile];
-
         if (imageProjectile != null) {
-            imageProjectile= new Image(choisirTypeProjectile.getImage());
+            imageProjectile= new Image(projectileActuel.getImage());
         }
     }
 
@@ -377,32 +363,13 @@ public class Partie {
         return charlotte.estMorte();
     }
 
-    public boolean isPartieFini() {
-        return partieFini;
-    }
-
-    public void setPartieFini(boolean partieFini) {
-        this.partieFini = partieFini;
-    }
-
-    public long getStartTimeNano() {
-        return startTimeNano;
-    }
-
-    public long getTempsDepuisPartieFini() {
-        return tempsDepuisPartieFini;
-    }
-
-    public void setTempsDepuisPartieFini(long tempsDepuisPartieFini) {
-        this.tempsDepuisPartieFini = tempsDepuisPartieFini;
+    public void setProjectileActuel(TypeProjectile projectileActuel) {
+        this.projectileActuel = projectileActuel;
     }
 
     public boolean isChangerEcranAcceuil() {
         return changerEcranAcceuil;
     }
 
-    public void setChangerEcranAcceuil(boolean changerEcranAcceuil) {
-        this.changerEcranAcceuil = changerEcranAcceuil;
-    }
 }
 

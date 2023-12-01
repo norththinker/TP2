@@ -65,19 +65,19 @@ public class Main extends Application {
                 }
             } else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
 
-                partie.setChoisirProjectile(0);
+                partie.setProjectileActuel(TypeProjectile.ETOILE);
 
 
             } else if (e.getCode() == KeyCode.W && Partie.debugMode) {
 
 
-                partie.setChoisirProjectile(2);
+                partie.setProjectileActuel(TypeProjectile.HIPPOCAMPE);
 
 
             } else if (e.getCode() == KeyCode.E && Partie.debugMode) {
 
 
-                partie.setChoisirProjectile(1);
+                partie.setProjectileActuel(TypeProjectile.SARDINES);
 
 
             } else if (e.getCode() == KeyCode.R && Partie.debugMode) {
