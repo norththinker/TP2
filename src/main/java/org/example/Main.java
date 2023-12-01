@@ -2,6 +2,7 @@ package org.example;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -55,17 +56,16 @@ public class Main extends Application {
         sceneJeu.setOnKeyPressed((e) -> {
             if (e.getCode() == KeyCode.SPACE) {
                 partie.lancerProjectile();
-            }  else if (e.getCode() == KeyCode.D) {
+            } else if (e.getCode() == KeyCode.D) {
 
                 if (Partie.debugMode)
                     Partie.debugMode = false;
                 else {
                     Partie.debugMode = true;
-                }  }
-else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
+                }
+            } else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
 
-                    partie.setChoisirProjectile(0);
-
+                partie.setChoisirProjectile(0);
 
 
             } else if (e.getCode() == KeyCode.W && Partie.debugMode) {
@@ -88,10 +88,12 @@ else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
 
             } else if (e.getCode() == KeyCode.T && Partie.debugMode) {
 
-                timer.start();
                 partie.commencerNouveauJeu(timer);
+                rootJeu.setBackground(Background.fill(partie.getCouleurArrierePlan()));
 
-
+            } else if (e.getCode() == KeyCode.ESCAPE) {
+                stage.setScene(sceneAccueil);
+                nouvellePartie(stage);
             } else {
                 Input.setKeyPressed(e.getCode(), true);
             }
@@ -113,15 +115,16 @@ else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
                 partie.update(deltaTemps);
                 partie.draw(context);
 
-                changementPartie(stage);
-
+                if (partie.isChangerEcranAcceuil()) {
+                    nouvellePartie(stage);
+                }
                 if (partie.charlotteArriveFin() && !partie.charlotteMorte()) {
                     // Recommencer le jeu
                     partie.commencerNouveauJeu(timer);
                     rootJeu.setBackground(Background.fill(partie.getCouleurArrierePlan()));
 
                 }
-                changementPartie(stage);
+
 
                 lastTime = now;
             }
@@ -152,7 +155,7 @@ else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
         rootAccueil.getChildren().addAll(logo, hboxJouerInfos);
         sceneacceuil.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE) {
-                System.exit(0);
+                Platform.exit();
             }
 
         });
@@ -168,8 +171,8 @@ else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
         });
 
         var vbox = new VBox();
-        var scene = new Scene(vbox, WIDTH, HEIGHT);
-        scene.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
+        var sceneInfo = new Scene(vbox, WIDTH, HEIGHT);
+        sceneInfo.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         Text text = new Text("Charlotte la Barbotte");
         Text text1 = new Text("Par Ismail Bissoular");
         Text text2 = new Text("Et Saib Merabet");
@@ -196,7 +199,7 @@ else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
         vbox.getChildren().add(boutonAnnuler);
 
         boutonInfo.setOnAction(event -> {
-            stage.setScene(scene);
+            stage.setScene(sceneInfo);
 
             choixPoissonInfo = r.nextInt(1, 6);
             text.setFont(Font.font(80));
@@ -209,7 +212,7 @@ else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
                 stage.setScene(sceneacceuil);
             });
 
-            scene.setOnKeyPressed(event1 -> {
+            sceneInfo.setOnKeyPressed(event1 -> {
                 if (event1.getCode() == KeyCode.ESCAPE) {
                     stage.setScene(sceneacceuil);
                 }
@@ -217,11 +220,10 @@ else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
         });
     }
 
-    private void changementPartie(Stage stage) {
-        if (partie.isChangerEcranAcceuil()) {
-            stage.setScene(sceneAccueil);
-            timer.stop();
-            partie = new Partie();
-        }
+    private void nouvellePartie(Stage stage) {
+        stage.setScene(sceneAccueil);
+        timer.stop();
+        partie = new Partie();
+        rootJeu.setBackground(Background.fill(partie.getCouleurArrierePlan()));
     }
 }

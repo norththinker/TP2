@@ -20,7 +20,8 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public class Partie {
-    private boolean dejatirer;
+    private Image imageProjectile;
+    private TypeProjectile choisirTypeProjectile;
     private Camera camera = new Camera(Main.WIDTH * 8);
     private double tempsPoisson;
 
@@ -45,12 +46,12 @@ public class Partie {
     private Baril baril;
     private int choisirProjectile;
     private int dernierTypeProjectile;
-    private Image choisirImage;
     private boolean partieFini;
     private long tempsDepuisPartieFini;
     private boolean changerEcranAcceuil;
 
     public Partie() {
+        imageProjectile = new Image("etoile.png");
         numeroNiveau = 1;
         couleurArrierePlan = Color.hsb(r.nextInt(190, 271), 0.84, 1);
         poissonsEnnemis = new LinkedList<>();
@@ -60,9 +61,9 @@ public class Partie {
         partieFini = false;
         baril = new Baril();
         projectiles = new ArrayList<>();
-        dejatirer = false;
+        boolean dejatirer = false;
         initialiserDecors();
-        initializeMedia();
+        initialiserMedia();
 
         poissonSpawnTimeline = getTimeline(poissonsEnnemis);
     }
@@ -82,7 +83,7 @@ public class Partie {
         }
     }
 
-    private void initializeMedia() {
+    private void initialiserMedia() {
         String musicFile = "src/main/resources/Midnight-City.mp3";
         try {
             File file = new File(musicFile);
@@ -243,9 +244,9 @@ public class Partie {
         context.strokeRect(positionHorizontaleBarre, positionVerticaleBarre, largeurBarreVie, hauteurBarreVie);
 
         //Ajouter le projectile utilisé à côté de la barre.
-        context.drawImage(Projectile.imageProjectile, positionHorizontaleBarre + largeurBarreVie + 10,
-                positionVerticaleBarre, Projectile.imageProjectile.getWidth(),
-                Projectile.imageProjectile.getHeight());
+        context.drawImage(imageProjectile, positionHorizontaleBarre + largeurBarreVie + 10,
+                positionVerticaleBarre, imageProjectile.getWidth(),
+                imageProjectile.getHeight());
 
         //dessiner les cœurs
         var proportionLargeurHauteur = 1872 / 365;
@@ -287,10 +288,9 @@ public class Partie {
 
     private Timeline getTimeline(LinkedList<Poisson> poissonsEnnemis) {
         tempsPoisson = 0.75 + (1 / Math.sqrt(numeroNiveau));
-        System.out.println(tempsPoisson);
         var poissonSpawnTimeline = new Timeline(
 
-                new KeyFrame(Duration.seconds(tempsPoisson), event -> { //// Cette methode pertmet de crée un poissons différent toutes les 1,75 secondes
+                new KeyFrame(Duration.seconds(tempsPoisson), event -> { // Cette methode pertmet de crée un poissons différent toutes les 1,75 secondes
                     // Code pour créer un nouveau poisson
 
                     for (int i = 0; i < r.nextInt(1, 6); i++) {
@@ -317,23 +317,14 @@ public class Partie {
 
 
     private void Changerimage() {
-        if (choisirProjectile == 0) {
 
+        choisirTypeProjectile = TypeProjectile.values()[choisirProjectile];
 
-            choisirImage = new Image("etoile.png");
-            Projectile.imageProjectile = choisirImage;
-        } else if (choisirProjectile == 1) {
-
-
-            choisirImage = new Image("sardines.png");
-            Projectile.imageProjectile = choisirImage;
-        } else if (choisirProjectile == 2) {
-
-
-            choisirImage = new Image("Hippocampe.png");
-            Projectile.imageProjectile = choisirImage;
+        if (imageProjectile != null) {
+            imageProjectile= new Image(choisirTypeProjectile.getImage());
         }
     }
+
 
     public void afficherStatusJeu(GraphicsContext context) {
         context.setFont(Font.font("Jokerman", FontWeight.BOLD, 100));
