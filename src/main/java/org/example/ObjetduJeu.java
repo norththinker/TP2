@@ -17,39 +17,23 @@ public abstract class ObjetduJeu {
      */
     protected Image imageObjet;
 
-    /**
-     * Coordonnée x de l'objet.
-     */
     protected double x;
 
-    /**
-     * Coordonnée y de l'objet.
-     */
     protected double y;
 
-    /**
-     * Largeur de l'objet.
-     */
+
     protected double w;
 
-    /**
-     * Hauteur de l'objet.
-     */
+
     protected double h;
 
-    /**
-     * Accélération le long de l'axe x.
-     */
+
     protected double ax;
 
-    /**
-     * Accélération le long de l'axe y.
-     */
+
     protected double ay;
 
-    /**
-     * Vitesse le long de l'axe x.
-     */
+
     protected double vx;
 
     /**
@@ -57,17 +41,10 @@ public abstract class ObjetduJeu {
      */
     protected double vy;
 
-    /**
-     * Indicateur indiquant si l'objet a été touché.
-     */
+
     protected boolean estTouche = false;
 
-    /**
-     * Dessine l'objet à l'écran.
-     *
-     * @param context Le contexte graphique sur lequel dessiner l'objet.
-     * @param camera  La caméra utilisée pour calculer les coordonnées à l'écran.
-     */
+
     public void draw(GraphicsContext context, Camera camera, int nombrePoissons, int nombreProjectile, double positionCharlotte) {
         context.setFill(Color.rgb(200, 200, 200, 0));
 
@@ -93,12 +70,7 @@ public abstract class ObjetduJeu {
 
     }
 
-    /**
-     * Met à jour l'état de l'objet en fonction du temps écoulé et de la position de la caméra.
-     *
-     * @param deltaTemps Le temps écoulé depuis la dernière mise à jour.
-     * @param camera     La caméra utilisée pour ajuster la position de l'objet.
-     */
+
     public abstract void update(double deltaTemps, Camera camera);
 
     /**
