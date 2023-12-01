@@ -88,7 +88,6 @@ public class Partie {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        mediaPlayer.setVolume(0);
     }
 
     public void update(double deltaTemps) {

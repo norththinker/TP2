@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -54,49 +55,7 @@ public class Main extends Application {
         rootJeu.getChildren().addAll(canvas);
 
         sceneJeu.setOnKeyPressed((e) -> {
-            if (e.getCode() == KeyCode.SPACE) {
-                partie.lancerProjectile();
-            } else if (e.getCode() == KeyCode.D) {
-
-                if (Partie.debugMode)
-                    Partie.debugMode = false;
-                else {
-                    Partie.debugMode = true;
-                }
-            } else if (e.getCode() == KeyCode.Q && Partie.debugMode) {
-
-                partie.setProjectileActuel(TypeProjectile.ETOILE);
-
-
-            } else if (e.getCode() == KeyCode.W && Partie.debugMode) {
-
-
-                partie.setProjectileActuel(TypeProjectile.HIPPOCAMPE);
-
-
-            } else if (e.getCode() == KeyCode.E && Partie.debugMode) {
-
-
-                partie.setProjectileActuel(TypeProjectile.SARDINES);
-
-
-            } else if (e.getCode() == KeyCode.R && Partie.debugMode) {
-
-
-                partie.Changernombredeviedecharlotte();
-
-
-            } else if (e.getCode() == KeyCode.T && Partie.debugMode) {
-
-                partie.commencerNouveauJeu(timer);
-                rootJeu.setBackground(Background.fill(partie.getCouleurArrierePlan()));
-
-            } else if (e.getCode() == KeyCode.ESCAPE) {
-                stage.setScene(sceneAccueil);
-                nouvellePartie(stage);
-            } else {
-                Input.setKeyPressed(e.getCode(), true);
-            }
+            gererTouches(e, stage, timer, partie, rootJeu);
         });
 
         sceneJeu.setOnKeyReleased((e) -> {
@@ -124,8 +83,6 @@ public class Main extends Application {
                     rootJeu.setBackground(Background.fill(partie.getCouleurArrierePlan()));
 
                 }
-
-
                 lastTime = now;
             }
         };
@@ -232,6 +189,49 @@ public class Main extends Application {
                 }
             });
         });
+    }
+    public void gererTouches(KeyEvent e, Stage stage, AnimationTimer timer, Partie partie, Pane rootJeu) {
+        switch (e.getCode()) {
+            case SPACE -> partie.lancerProjectile();
+            case D -> {
+                if (Partie.debugMode) {
+                    Partie.debugMode = false;
+                } else {
+                    Partie.debugMode = true;
+                }
+            }
+            case Q -> {
+                if (Partie.debugMode) {
+                    partie.setProjectileActuel(TypeProjectile.ETOILE);
+                }
+            }
+            case W -> {
+                if (Partie.debugMode) {
+                    partie.setProjectileActuel(TypeProjectile.HIPPOCAMPE);
+                }
+            }
+            case E -> {
+                if (Partie.debugMode) {
+                    partie.setProjectileActuel(TypeProjectile.SARDINES);
+                }
+            }
+            case R -> {
+                if (Partie.debugMode) {
+                    partie.Changernombredeviedecharlotte();
+                }
+            }
+            case T -> {
+                if (Partie.debugMode) {
+                    partie.commencerNouveauJeu(timer);
+                    rootJeu.setBackground(Background.fill(partie.getCouleurArrierePlan()));
+                }
+            }
+            case ESCAPE -> {
+                stage.setScene(sceneAccueil);
+                nouvellePartie(stage);
+            }
+            default -> Input.setKeyPressed(e.getCode(), true);
+        }
     }
 
     private void nouvellePartie(Stage stage) {
