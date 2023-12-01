@@ -130,7 +130,7 @@ public class Partie {
             TypeProjectile projectileChoisi = TypeProjectile.values()[baril.getChoix()];
 
             while (projectileActuel == projectileChoisi)
-                baril.setChoix(r.nextInt(0, 3));
+                projectileChoisi = TypeProjectile.values()[r.nextInt(0, 3)];
 
 
             projectileActuel = projectileChoisi;
