@@ -32,6 +32,7 @@ public class Hippocampe extends Projectile {
         x += deltaTemps * vx;
 
         y = yInitial + amplitude * Math.sin(2 * Math.PI * tempEcoule / period);
+        gererHorsEcran(camera);
     }
 
     @Override
@@ -41,7 +42,8 @@ public class Hippocampe extends Projectile {
 
 
     @Override
-    public void calculerForcesElectriques(LinkedList<Poisson> poissonsEnnemis, Personnage charlotte) {
+    public void calculerForcesElectriques(LinkedList<PoissonEnnemi> poissonsEnnemis, Personnage charlotte) {
 
     }
+
 }

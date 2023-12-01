@@ -3,6 +3,7 @@ package org.example;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 /**
@@ -76,14 +77,16 @@ public abstract class ObjetduJeu {
         context.fillRect(xEcran, y, w, h);
         context.drawImage(imageObjet, xEcran, y, w, h);
 
-        //On décide les contours jaunes si on est en mode debug.
+        //On dessine les contours jaunes si on est en mode debug.
         if (Partie.debugMode) {
             context.setStroke(Color.YELLOW);
             context.setLineWidth(2.0);
             context.strokeRect(xEcran, y, w, h);
-            context.fillText("Nobmre de poissons" + nombrePoissons, 250 ,250);
-            context.fillText("Nombre de projectiles" + nombreProjectile, 5 ,9);
-            context.fillText("Positon de charlotte" + positionCharlotte, 5 ,10);
+            context.setFill(Color.WHITE);
+            context.setFont(Font.font(15));
+            context.fillText("NB poissons: " + nombrePoissons, 100 ,120);
+            context.fillText("NB projectiles: " + nombreProjectile, 100 ,140);
+            context.fillText("Positon charlotte: " + positionCharlotte, 150 ,160);
 
 
         }

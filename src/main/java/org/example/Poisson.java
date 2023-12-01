@@ -5,5 +5,4 @@ public abstract class Poisson extends ObjetduJeu{
         var restraindreAuMinimum = Math.max(min, valeur);
         return Math.min(max, restraindreAuMinimum);
     }
-
 }

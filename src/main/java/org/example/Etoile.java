@@ -28,7 +28,7 @@ public class Etoile extends Projectile{
     }
 
     @Override
-    public void calculerForcesElectriques(LinkedList<Poisson> poissonsEnnemis, Personnage charlotte) {
+    public void calculerForcesElectriques(LinkedList<PoissonEnnemi> poissonsEnnemis, Personnage charlotte) {
 
     }
 }

@@ -22,9 +22,9 @@ import java.util.Random;
 public class Partie {
     private Image imageProjectile;
     private TypeProjectile projectileActuel;
-    private Camera camera = new Camera(Main.WIDTH * 8);
+    public static double longeurNiveau = Main.WIDTH*8;
+    private Camera camera = new Camera(longeurNiveau);
     private double tempsPoisson;
-
     private Personnage charlotte = new Personnage(0, Main.HEIGHT / 2, 102, 90);
     private Random r = new Random();
     public static boolean debugMode = false;
@@ -35,7 +35,7 @@ public class Partie {
     private LinkedList<Decor> decors = new LinkedList<>();
     private MediaPlayer mediaPlayer;
     private Color couleurArrierePlan;
-    private LinkedList<Poisson> poissonsEnnemis;
+    private LinkedList<PoissonEnnemi> poissonsEnnemis;
     private Timeline poissonSpawnTimeline;
     private long tempsDepuisDebut;
     private long startTimeNano;
@@ -67,7 +67,7 @@ public class Partie {
         decors.add(decorActuel);
         int nombreDecors = 1;
 
-        while (decorActuel.getX() + decorActuel.getW() < Main.WIDTH * 8) {
+        while (decorActuel.getX() + decorActuel.getW() < Partie.longeurNiveau) {
             Image imageDecor = new Image("decor" + r.nextInt(1, 7) + ".png");
             decorActuel = new Decor(0, 0, imageDecor);
             decorActuel.placerDecorSuivant(decors.get(nombreDecors - 1));
@@ -110,8 +110,10 @@ public class Partie {
             projectile.update(deltaTemps, camera);
         }
         updateTempsEcouleDepuisDebut();
-        // 2. Check for collisions
-        for (Poisson ennemi : poissonsEnnemis) {
+        // Check pour collisions
+        for (PoissonEnnemi ennemi : poissonsEnnemis) {
+
+
             if (!charlotte.isEstTouche()) {
                 charlotte.testCollision(ennemi);
             }
@@ -150,9 +152,9 @@ public class Partie {
             charlotte.testCollision(poissonEnnemi);
         }
 
-        // 3. Remove entities marked as "touched"
-        poissonsEnnemis.removeIf(Poisson::isEstTouche);
-
+        // Enlever les poissons ennemis tués
+        poissonsEnnemis.removeIf(PoissonEnnemi::isEstTouche);
+        poissonsEnnemis.removeIf(PoissonEnnemi::isDepasse);
     }
 
     public void draw(GraphicsContext context) {
@@ -160,24 +162,24 @@ public class Partie {
         context.clearRect(0, 0, Main.WIDTH, Main.HEIGHT);
 
 
-        // 5. Draw entities on the canvas
+        // Draw entities on the canvas
 
 
-        baril.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/(Main.WIDTH*8)*100);
+        baril.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/longeurNiveau*100);
         for (Decor decor : decors) {
-            decor.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/(Main.WIDTH*8)*100);
+            decor.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/longeurNiveau*100);
         }
         for (Poisson poissonEnnemi : poissonsEnnemis) {
             // Utilisez la caméra pour dessiner en prenant en compte sa position
-            poissonEnnemi.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/(Main.WIDTH*8)*100);
+            poissonEnnemi.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/longeurNiveau*100);
         }
 
         for (Projectile projectile : projectiles) {
             if (projectile != null) {
-                projectile.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/(Main.WIDTH*8)*100);
+                projectile.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/longeurNiveau*100);
             }
         }
-        charlotte.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/(Main.WIDTH*8)*100);
+        charlotte.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/longeurNiveau*100);
 
         dessinerBarreVie(context);
 
@@ -252,8 +254,6 @@ public class Partie {
         return couleurArrierePlan;
     }
 
-
-
     public void lancerProjectile() {
         if (charlotte.peutLancer()) {
             double positionX = charlotte.getX() + charlotte.w / 2 - 36 / 2;
@@ -276,7 +276,7 @@ public class Partie {
     }
 
 
-    private Timeline getTimeline(LinkedList<Poisson> poissonsEnnemis) {
+    private Timeline getTimeline(LinkedList<PoissonEnnemi> poissonsEnnemis) {
         tempsPoisson = 0.75 + (1 / Math.sqrt(numeroNiveau));
         var poissonSpawnTimeline = new Timeline(
 

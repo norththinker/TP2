@@ -1,6 +1,5 @@
 package org.example;
 
-import javafx.scene.image.Image;
 
 import java.util.LinkedList;
 
@@ -22,5 +21,5 @@ public abstract class Projectile extends ObjetduJeu {
         return depasse;
     }
 
-    public abstract void calculerForcesElectriques(LinkedList<Poisson> poissonsEnnemis, Personnage charlotte);
+    public abstract void calculerForcesElectriques(LinkedList<PoissonEnnemi> poissonsEnnemis, Personnage charlotte);
 }

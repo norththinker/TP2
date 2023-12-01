@@ -28,7 +28,7 @@ public class Baril extends ObjetduJeu {
         imageObjet = new Image("baril.png");
         hauteurDuJeu = Main.HEIGHT;
         Random r = new Random();
-        x = r.nextDouble(Main.WIDTH*8/5, 4*Main.WIDTH*8/5);
+        x = r.nextDouble(Partie.longeurNiveau/5, 4*Partie.longeurNiveau/5);
         w = 70;
         h = 83;
         hauteurDuBaril = h;

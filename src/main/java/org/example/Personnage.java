@@ -53,9 +53,11 @@ public class Personnage extends Poisson {
 
         toCharlotteAvant(charlotteBouge);
 
-        ax = left ? -1000 : right ? 1000 : -vx*5;
-        ay = up ? -1000 : down ? 1000 : -vy*5;
+
+        ax = calculerAx(left, right, vx);
+        ay = calculerAy(up, down, vy);
     }
+
 
     private void toCharlotteAvant(boolean charlotteBouge) {
         if (charlotteBouge && !clignote)
@@ -64,6 +66,21 @@ public class Personnage extends Poisson {
         else if (!charlotteBouge && !clignote) {
             imageObjet = charlotteNormalImage;
         }
+    }
+    private double calculerAcceleration(boolean positif, boolean negatif, double vitesse, double accelerationPourArreter) {
+        if (positif) {
+            return negatif ? 0 : 1000;
+        } else {
+            return negatif ? -1000 : -vitesse * accelerationPourArreter;
+        }
+    }
+
+    private double calculerAx(boolean left, boolean right, double vx) {
+        return calculerAcceleration(right, left, vx, 5);
+    }
+
+    private double calculerAy(boolean up, boolean down, double vy) {
+        return calculerAcceleration(down, up, vy, 5);
     }
 
     @Override

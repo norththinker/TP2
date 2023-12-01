@@ -38,11 +38,12 @@ public class  BoiteDeSardine extends Projectile {
         x += deltaTemps * vx;
         y += deltaTemps * vy;
         gererEnY();
+        gererHorsEcran(camera);
 
     }
 
 
-    public void calculerForcesElectriques(LinkedList<Poisson> poissonsEnnemis, Personnage charlotte) {
+    public void calculerForcesElectriques(LinkedList<PoissonEnnemi> poissonsEnnemis, Personnage charlotte) {
         // Réinitialiser les forces
         forceEnX= 0;
         forceEnY = 0;

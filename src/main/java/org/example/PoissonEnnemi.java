@@ -3,6 +3,7 @@ package org.example;
 import javafx.scene.image.Image;
 
 public class PoissonEnnemi extends Poisson {
+    private boolean depasse = false;
 
     public PoissonEnnemi(double x, double y, double w, double h, double vy, Image imagePoisson) {
         this.x = x;
@@ -29,6 +30,9 @@ public class PoissonEnnemi extends Poisson {
     @Override
     protected void gererHorsEcran(Camera camera) {
         gererEnY();
+        if (x + w < camera.getX()){
+            depasse = true;
+        }
     }
 
     @Override
@@ -36,5 +40,9 @@ public class PoissonEnnemi extends Poisson {
         if (this.enCollisionAvec(autreObjet)){
             this.estTouche = true;
         }
+    }
+
+    public boolean isDepasse() {
+        return depasse;
     }
 }
