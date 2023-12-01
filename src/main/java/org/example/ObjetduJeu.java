@@ -3,6 +3,7 @@ package org.example;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 /**
  * La classe abstraite représentant un objet de jeu.
@@ -66,7 +67,7 @@ public abstract class ObjetduJeu {
      * @param context Le contexte graphique sur lequel dessiner l'objet.
      * @param camera  La caméra utilisée pour calculer les coordonnées à l'écran.
      */
-    public void draw(GraphicsContext context, Camera camera) {
+    public void draw(GraphicsContext context, Camera camera, int nombrePoissons, int nombreProjectile, double positionCharlotte) {
         context.setFill(Color.rgb(200, 200, 200, 0));
 
         // Calculer la coordonnée x à l'écran (c'est-à-dire avec respect à la caméra)
@@ -80,6 +81,11 @@ public abstract class ObjetduJeu {
             context.setStroke(Color.YELLOW);
             context.setLineWidth(2.0);
             context.strokeRect(xEcran, y, w, h);
+            context.fillText("Nobmre de poissons" + nombrePoissons, 250 ,250);
+            context.fillText("Nombre de projectiles" + nombreProjectile, 5 ,9);
+            context.fillText("Positon de charlotte" + positionCharlotte, 5 ,10);
+
+
         }
 
     }

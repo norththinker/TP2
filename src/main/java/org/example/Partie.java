@@ -129,9 +129,10 @@ public class Partie {
 
             TypeProjectile projectileChoisi = TypeProjectile.values()[baril.getChoix()];
 
-            while (projectileActuel == projectileChoisi)
+            while (projectileActuel == projectileChoisi) {
                 projectileChoisi = TypeProjectile.values()[r.nextInt(0, 3)];
-
+                
+            }
 
             projectileActuel = projectileChoisi;
             baril.setDejaTouche(true);
@@ -162,21 +163,21 @@ public class Partie {
         // 5. Draw entities on the canvas
 
 
-        baril.draw(context, camera);
+        baril.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/(Main.WIDTH*8)*100);
         for (Decor decor : decors) {
-            decor.draw(context, camera);
+            decor.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/(Main.WIDTH*8)*100);
         }
         for (Poisson poissonEnnemi : poissonsEnnemis) {
             // Utilisez la caméra pour dessiner en prenant en compte sa position
-            poissonEnnemi.draw(context, camera);
+            poissonEnnemi.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/(Main.WIDTH*8)*100);
         }
 
         for (Projectile projectile : projectiles) {
             if (projectile != null) {
-                projectile.draw(context, camera);
+                projectile.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/(Main.WIDTH*8)*100);
             }
         }
-        charlotte.draw(context, camera);
+        charlotte.draw(context, camera,poissonsEnnemis.size(),projectiles.size(),charlotte.x/(Main.WIDTH*8)*100);
 
         dessinerBarreVie(context);
 
@@ -279,7 +280,7 @@ public class Partie {
         tempsPoisson = 0.75 + (1 / Math.sqrt(numeroNiveau));
         var poissonSpawnTimeline = new Timeline(
 
-                new KeyFrame(Duration.seconds(tempsPoisson), event -> { // Cette methode pertmet de crée un poissons différent toutes les 1,75 secondes
+                new KeyFrame(Duration.seconds(tempsPoisson), event -> { // Cette methode permet de crée un poissons différent
                     // Code pour créer un nouveau poisson
 
                     for (int i = 0; i < r.nextInt(1, 6); i++) {
